@@ -31,7 +31,6 @@ public class UploadServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
-		System.out.println("This was called");
 		out.println("Go Home");
 		out.close();
 	}
@@ -78,9 +77,10 @@ public class UploadServlet extends HttpServlet {
             }
             os2.close();
             out.println("<h3>Second file uploaded successfully!</h3>");
-            out.println("<br>");
-            out.print("Press this button to continue: ");
-            out.println("<input type=\"submit\" name=\""+filename+"\">");
+            out.println("<form action=\"/CohortTool/RunSnpomics\" method=\"post\">");
+            out.println("<input type=\"hidden\" name=\"file\" value=\""+filename+"\">");
+            out.println("<input type=\"submit\" value=\"continue\">");
+            out.println("</form>");
         }
         catch(Exception ex) {
            out.println("Exception -->" + ex.getMessage());
