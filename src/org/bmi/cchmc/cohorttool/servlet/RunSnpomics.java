@@ -65,7 +65,7 @@ public class RunSnpomics extends HttpServlet {
 		String jarfile = this.getServletContext().getRealPath("SNPomics/SNPomics-1.0-SNAPSHOT-jar-with-dependencies.jar");
 		String inputfile = this.getServletContext().getRealPath("uploads/"+filename+".vcf");
 		String outputfile = this.getServletContext().getRealPath("SNPomics/output/"+filename+".txt");
-		String arguements = "-jar -Xmx3G ";
+		String arguements = "-jar -Xmx2G ";
 		String systemcall = "java " + arguements + jarfile+" annot -i "+inputfile+" -o " + outputfile;
 		System.out.println("Running Command: "+systemcall);
 		Process proc = Runtime.getRuntime().exec(systemcall);
