@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -18,8 +19,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import com.mongodb.MongoClient;
+
+import org.bmi.cchmc.cohorttool.patient.PatientSet;
+
 import com.mongodb.*;
+
 
 @WebServlet(name="UploadServlet", urlPatterns={"/upload"})     // specify urlPattern for servlet
 @MultipartConfig                                               // specifies servlet takes multipart/form-data
@@ -93,6 +97,21 @@ public class UploadServlet extends HttpServlet {
             	return;
             }
             out.println("<h3 class=\"text-success\">VCF is Valid</h3>");
+            
+            PatientSet ps = new PatientSet(outputfile2);
+            BasicDBObject patientInfo = ps.getBSON();
+            BasicDBObject infoToLoad = new BasicDBObject();
+            infoToLoad.append("Patient Info", patientInfo);
+            infoToLoad.append("Username",username);
+            infoToLoad.append("Analysis Name",filename);
+            infoToLoad.append("VCF File Location",outputfile1);
+            infoToLoad.append("PED File Location",outputfile2);
+            java.util.Date date= new java.util.Date();
+            long time = (new Timestamp(date.getTime())).getTime();
+            infoToLoad.append("Time Loaded",time);
+            infoToLoad.append("Analysis Name",filename+"-"+time);
+            coll.insert(infoToLoad);
+            System.out.println("Loaded: "+infoToLoad);
             out.println("<form action=\"/CohortTool/RunSnpomics\" method=\"post\">");
             out.println("<input type=\"hidden\" name=\"file\" value=\""+filename+"\">");
             out.println("<input type=\"submit\" value=\"continue\">");
@@ -107,6 +126,7 @@ public class UploadServlet extends HttpServlet {
         }
 	}
 
+	@SuppressWarnings("resource")
 	private boolean validateFiles(String filename){
 		try {
 			BufferedReader ped = new BufferedReader(new FileReader( this.getServletContext().getRealPath("uploads/"+filename+".ped")));
@@ -147,8 +167,6 @@ public class UploadServlet extends HttpServlet {
 				vcf.close();
 				return false;
 			}
-			ped.close();
-			vcf.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return false;

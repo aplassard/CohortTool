@@ -1,4 +1,4 @@
-package org.bmi.cchmc.cohorttool;
+package org.bmi.cchmc.cohorttool.patient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ public class Individual {
 	}
 
 	public void setId(String id) {
-		this.id = id;
+		this.id = id.replace(".","_");
 	}
 
 	public Individual(){
@@ -64,26 +64,47 @@ public class Individual {
 	}
 	
 	public Individual(String id){
-		this.setId(id);
+		this.setId(id.replace(".","_"));
 	}
 	
 	public BasicDBObject getBson(){
 		BasicDBObject info = new BasicDBObject();
 		info.append("id",this.getId());
-		info.append("mother",this.getMother().id);
-		info.append("father",this.getFather().id);
+		if(getMother()!=null)
+			info.append("mother",this.getMother().id);
+		if(getFather()!=null)
+			info.append("father",this.getFather().id);
 		info.append("isAfflicted",this.isAfflicted());
-		if(this.getMutations().size()>0){
+		info.append("Gender",this.getSex() ? "Female":"Male");
+		if(getMutations()!=null&&this.getMutations().size()>0){
 			ArrayList<PatientMutation> m = (ArrayList<PatientMutation>) this.getMutations();
 			info.append("mutations",m);
 		}
 		return info;
 	}
 	
+	public boolean getSex() {
+		return sex;
+	}
+
+	public void setSex(boolean sex) {
+		this.sex = sex;
+	}
+
+	public String getFamilyId() {
+		return familyId;
+	}
+
+	public void setFamilyId(String familyId) {
+		this.familyId = familyId;
+	}
+
 	private List<PatientMutation> mutations;
 	private Individual mother;
 	private Individual father;
 	private boolean isAfflicted;
 	private String id;
+	private boolean sex; // female=true male=false
+	private String familyId;
 	
 }
