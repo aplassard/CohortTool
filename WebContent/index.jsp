@@ -41,7 +41,7 @@
 
     <div class="container">
 
-      <h2>Welcome to the Cohort Analyzer for Large Scale Mendellian Diseases</h2>
+      <h2>Welcome to the Cohort Analyzer for Large Scale Mendelian Diseases</h2>
       <div>
       <form method="post" action="/CohortTool/upload" enctype="multipart/form-data">
       VCF File: <input type="file" name="vcf">

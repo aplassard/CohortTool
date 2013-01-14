@@ -1,5 +1,7 @@
 *.class
-
+.DS_Store
+*.db
+*.conf
 # Package Files #
 *.jar
 *.war

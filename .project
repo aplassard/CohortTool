@@ -3,6 +3,7 @@
 	<name>CohortTool</name>
 	<comment></comment>
 	<projects>
+		<project>mongo-2.10.1</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
