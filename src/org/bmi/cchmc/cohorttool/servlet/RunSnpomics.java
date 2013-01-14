@@ -1,6 +1,8 @@
 package org.bmi.cchmc.cohorttool.servlet;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
@@ -37,10 +39,8 @@ public class RunSnpomics extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("Started");
 		response.setContentType("text/html;charset=UTF-8");
 		String[] name = request.getParameterValues("file");
-		System.out.println("got "+name.length+" parameters");
 		PrintWriter out = response.getWriter();
 		if(name.length != 1) out.println("Incorrect Number of values in name");
 		else{
@@ -53,6 +53,10 @@ public class RunSnpomics extends HttpServlet {
 				out.println("There was an error the annotator");
 			}
 			out.println("<h2>Completed Successfully!</h2>");
+			out.println("<form action=\"/CohortTool/StartAnalysis\" method=\"post\">");
+            out.println("<input type=\"hidden\" name=\"file\" value=\""+name[0]+"\">");
+            out.println("<input type=\"submit\" value=\"continue\">");
+            out.println("</form>");
 		}
 		out.close();
 	}
@@ -65,7 +69,24 @@ public class RunSnpomics extends HttpServlet {
 		String systemcall = "java " + arguements + jarfile+" annot -i "+inputfile+" -o " + outputfile;
 		System.out.println("Running Command: "+systemcall);
 		Process proc = Runtime.getRuntime().exec(systemcall);
-		
+		try{
+			BufferedReader b = new BufferedReader( new InputStreamReader(proc.getInputStream()));
+			String line="";
+			System.out.println("Output Stream:");
+			while((line=b.readLine())!=null){
+				System.out.println(line);
+			}
+			b.close();
+			b = new BufferedReader( new InputStreamReader(proc.getErrorStream()));
+			line="";
+			System.out.println("Error Stream:");
+			while((line=b.readLine())!=null){
+				System.out.println(line);
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 }
