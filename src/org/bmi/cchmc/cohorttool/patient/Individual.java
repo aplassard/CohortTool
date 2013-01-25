@@ -12,6 +12,7 @@ public class Individual {
 		if(this.mutations!=null) mutations.add( (PatientMutation) m);
 		else{
 			this.mutations = new ArrayList<PatientMutation>();
+			mutations.add( (PatientMutation) m);
 		}
 	}
 	
@@ -61,6 +62,14 @@ public class Individual {
 		this.father=null;
 		this.isAfflicted=(Boolean) null;
 		this.id=null;
+	}
+	
+	public Individual(DBObject o){
+		this.mutations = new ArrayList<PatientMutation>();
+		this.mother=null;
+		this.father=null;
+		this.isAfflicted = (Boolean) o.get("isAfflicted");
+		this.id= (String) o.get("id");
 	}
 	
 	public Individual(String id){

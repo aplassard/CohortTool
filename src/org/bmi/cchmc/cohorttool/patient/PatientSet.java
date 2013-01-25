@@ -4,11 +4,16 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
 
-import com.mongodb.BasicDBObject;
+import org.bmi.cchmc.cohorttool.mutation.PatientMutation;
+import org.bson.types.ObjectId;
+
+import com.mongodb.*;
 
 public class PatientSet {
 
@@ -72,6 +77,82 @@ public class PatientSet {
 	}
 	
 	private Map<String,Individual> patients;
+	private boolean hasMutations=false;
 	
+	public PatientSet(ObjectId o){
+		// TODO create constructor from ObjectId
+		MongoClient mongoClient;
+		try {
+			mongoClient = new MongoClient( "localhost" , 27017 );
+			DB db = mongoClient.getDB("CohortTool");
+	        DBCollection coll = db.getCollection("projects");
+	        DBObject P = coll.findOne(new BasicDBObject("_id",o));
+	        DBObject Patients = (DBObject) P.get("Patient Info");
+	        Set<String> keys = Patients.keySet();
+	        this.patients = new HashMap<String,Individual>();
+	        Individual I;
+	        for(String K : keys){
+	        	I = new Individual((DBObject) Patients.get(K));
+	        	this.patients.put(K, I);
+	        }
+	        for(String K: keys){
+	        	P = (DBObject) Patients.get(K);
+	        	I = this.patients.get(K);
+	        	if(P.containsField("mother")){
+	        		I.setMother(this.patients.get(P.get("mother")));
+	        	}
+	        	if(P.containsField("father")){
+	        		I.setFather(this.patients.get(P.get("father")));
+	        	}
+	        	this.patients.remove(K);
+	        	this.patients.put(K, I);
+	        }
+	        
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+	}
+	
+	public void getMutations(String filename){
+		try {
+			BufferedReader txt = new BufferedReader(new FileReader(filename));
+			String[] header = txt.readLine().split("\t");
+			DBObject mutations = new BasicDBObject();
+			String line;
+			String[] lineinfo;
+			DBObject mutation;
+			PatientMutation m;
+			String a,r;
+			while((line=txt.readLine())!=null){
+				mutation = new BasicDBObject();
+				lineinfo=line.split("\t");
+				mutation.put("DBSNP", lineinfo[0]);
+				m=new PatientMutation();
+				a=lineinfo[4];
+				r=lineinfo[3];
+				m.addAlternate(lineinfo[4]);
+				m.setReference(lineinfo[3]);
+				m.setChr(lineinfo[1]);
+				m.setLocation(Integer.parseInt(lineinfo[2]));
+				mutation.put("info", m.toString());
+				mutation.put("gene", lineinfo[5]);
+				mutation.put("CDNAVariation", lineinfo[6]);
+				mutation.put("ProteinVariation", lineinfo[7]);
+				Individual I;
+				for(int i=8;i<(header.length-8)/3 + 8; i++){
+					I = this.patients.get(header[i].replace(".","_"));
+					
+				}
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
 
 }

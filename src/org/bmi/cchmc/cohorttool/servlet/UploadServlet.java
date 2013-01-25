@@ -58,7 +58,8 @@ public class UploadServlet extends HttpServlet {
         DBCollection coll = db.getCollection("projects");
         
         try {
-            
+        	java.util.Date date= new java.util.Date();
+        	long time = (new Timestamp(date.getTime())).getTime();
             Part p1 = request.getPart("vcf");
             Part p2  = request.getPart("ped");
             Part p3 = request.getPart("name");
@@ -68,8 +69,8 @@ public class UploadServlet extends HttpServlet {
             s.close();
             s = new Scanner(p4.getInputStream());
             String username = s.nextLine();
-            String outputfile1 = this.getServletContext().getRealPath("")+"/uploads/"+filename+".vcf";  // get path on the server
-            String outputfile2 = this.getServletContext().getRealPath("")+"/uploads/"+filename+".ped";  // get path on the server
+            String outputfile1 = this.getServletContext().getRealPath("")+"/uploads/"+filename+"-"+time+".vcf";  // get path on the server
+            String outputfile2 = this.getServletContext().getRealPath("")+"/uploads/"+filename+"-"+time+".ped";  // get path on the server
             
             FileOutputStream os1 = new FileOutputStream(outputfile1);
             FileOutputStream os2 = new FileOutputStream(outputfile2);
@@ -92,7 +93,7 @@ public class UploadServlet extends HttpServlet {
             os2.close();
             out.println("<h3 class=\"text-success\">Second file uploaded successfully!</h3>");
             
-            if(!this.validateFiles(filename)){
+            if(!this.validateFiles(filename+"-"+time)){
             	out.println("Error: VCF is invalid");
             	return;
             }
@@ -106,14 +107,14 @@ public class UploadServlet extends HttpServlet {
             infoToLoad.append("Analysis Name",filename);
             infoToLoad.append("VCF File Location",outputfile1);
             infoToLoad.append("PED File Location",outputfile2);
-            java.util.Date date= new java.util.Date();
-            long time = (new Timestamp(date.getTime())).getTime();
+            
             infoToLoad.append("Time Loaded",time);
             infoToLoad.append("Analysis Name",filename+"-"+time);
             coll.insert(infoToLoad);
             System.out.println("Loaded: "+infoToLoad);
             out.println("<form action=\"/CohortTool/RunSnpomics\" method=\"post\">");
-            out.println("<input type=\"hidden\" name=\"file\" value=\""+filename+"\">");
+            out.println("<input type=\"hidden\" name=\"file\" value=\""+filename+"-"+time+"\">");
+            out.println("<input type=\"hidden\" name=\"id\" value=\""+infoToLoad.get("_id")+"\">");
             out.println("<input type=\"submit\" value=\"continue\">");
             out.println("</form>");
         }

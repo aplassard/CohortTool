@@ -41,6 +41,7 @@ public class RunSnpomics extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
 		String[] name = request.getParameterValues("file");
+		String[] id = request.getParameterValues("id");
 		PrintWriter out = response.getWriter();
 		if(name.length != 1) out.println("Incorrect Number of values in name");
 		else{
@@ -55,6 +56,7 @@ public class RunSnpomics extends HttpServlet {
 			out.println("<h2>Completed Successfully!</h2>");
 			out.println("<form action=\"/CohortTool/StartAnalysis\" method=\"post\">");
             out.println("<input type=\"hidden\" name=\"file\" value=\""+name[0]+"\">");
+            out.println("<input type=\"hidden\" name=\"if\" value=\""+id[0]+"\">");
             out.println("<input type=\"submit\" value=\"continue\">");
             out.println("</form>");
 		}

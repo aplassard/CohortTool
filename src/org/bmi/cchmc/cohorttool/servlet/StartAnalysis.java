@@ -4,6 +4,8 @@ package org.bmi.cchmc.cohorttool.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import org.bmi.cchmc.cohorttol.util.*;
+import org.bmi.cchmc.cohorttool.patient.PatientSet;
+import org.bson.types.ObjectId;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -41,7 +43,8 @@ public class StartAnalysis extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = response.getWriter();
-		//String name = request.getParameterValues("file")[0];
+		String id = request.getParameterValues("id")[0];
+		PatientSet PS = new PatientSet(new ObjectId(id));
 		out.print(ServletUtilities.getBootStrapHeader("Start Analysis"));
 		String content="";
 		content+="<div class=\"container\">\n";

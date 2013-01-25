@@ -3,7 +3,15 @@ package org.bmi.cchmc.cohorttool.mutation;
 
 public class PatientMutation extends Mutation {
 
-
+	public boolean homozygous=false;
+	
+	public void setHomozygous(boolean b){
+		homozygous = b;
+	}
+	
+	public boolean isHomozygous(){
+		return homozygous;
+	}
 	/**
 	 * @param args
 	 */
