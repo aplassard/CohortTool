@@ -41,7 +41,7 @@ public class StartAnalysis extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
 		PrintWriter out = response.getWriter();
-		String name = request.getParameterValues("file")[0];
+		//String name = request.getParameterValues("file")[0];
 		out.print(ServletUtilities.getBootStrapHeader("Start Analysis"));
 		String content="";
 		content+="<div class=\"container\">\n";
