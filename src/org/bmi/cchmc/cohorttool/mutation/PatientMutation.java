@@ -36,5 +36,16 @@ public class PatientMutation extends Mutation {
 		vcfForm+=this.getAlternate();
 		return vcfForm;
 	}
-
+	
+	public PatientMutation(){
+		
+	}
+	
+	public PatientMutation(String chr, int loc, String ref, String alt, boolean h){
+		this.setReference(ref);
+		this.setChr(chr);
+		this.alternate = alt;
+		this.homozygous = h;
+		this.setLocation(loc);
+	}
 }

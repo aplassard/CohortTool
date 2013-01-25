@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
@@ -114,7 +115,33 @@ public class PatientSet {
 		}
         
 	}
-	
+	/*
+	 * Params filename
+	 * Process:
+	 * 		Reads file header and splits to get information
+	 * 		Create list of file mutations
+	 * 		Read file line by line
+	 * 			Add filemutation on that line to the list
+	 * 				rsID?
+	 * 				chromosome
+	 * 				position
+	 * 				reference
+	 * 				alternate
+	 * 				gene?
+	 * 				CdnaVariation?
+	 * 				ProteinVariation?
+	 * 			Read through the patients in the line
+	 * 			If patient has mutation
+	 * 				create new patient mutation
+	 * 					add reference
+	 * 					add alternate
+	 * 					add chromosome
+	 * 					add position
+	 * 					add zygosity
+	 * 				add mutation to patient
+	 * 		Resave "Patient Info" to database
+	 */
+	// TODO create filemutation
 	public void getMutations(String filename){
 		try {
 			BufferedReader txt = new BufferedReader(new FileReader(filename));
@@ -124,14 +151,15 @@ public class PatientSet {
 			String[] lineinfo;
 			DBObject mutation;
 			PatientMutation m;
-			String a,r;
+			String a;
+			String[] alleles;
+			ArrayList<BasicDBObject> FileMutations = new ArrayList<BasicDBObject>();
 			while((line=txt.readLine())!=null){
 				mutation = new BasicDBObject();
 				lineinfo=line.split("\t");
 				mutation.put("DBSNP", lineinfo[0]);
 				m=new PatientMutation();
 				a=lineinfo[4];
-				r=lineinfo[3];
 				m.addAlternate(lineinfo[4]);
 				m.setReference(lineinfo[3]);
 				m.setChr(lineinfo[1]);
@@ -140,12 +168,19 @@ public class PatientSet {
 				mutation.put("gene", lineinfo[5]);
 				mutation.put("CDNAVariation", lineinfo[6]);
 				mutation.put("ProteinVariation", lineinfo[7]);
+				FileMutations.add((BasicDBObject) mutation);
 				Individual I;
 				for(int i=8;i<(header.length-8)/3 + 8; i++){
 					I = this.patients.get(header[i].replace(".","_"));
-					
+					alleles = lineinfo[i].split("/");
+					if(alleles[0].equals(a)&&alleles[1].equals(a)){
+						
+					} else if(alleles[0].equals(a)||alleles[1].equals(a)){
+						
+					}
 				}
 			}
+			txt.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
