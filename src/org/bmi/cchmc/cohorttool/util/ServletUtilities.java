@@ -1,4 +1,4 @@
-package org.bmi.cchmc.cohorttol.util;
+package org.bmi.cchmc.cohorttool.util;
 
 public class ServletUtilities {
 	public static String getBootStrapHeader(String title){

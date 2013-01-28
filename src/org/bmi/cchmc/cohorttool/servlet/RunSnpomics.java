@@ -4,17 +4,26 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+
+import org.bmi.cchmc.cohorttool.util.ServletUtilities;
 
 /**
  * Servlet implementation class RunSnpomics
  */
-@WebServlet("/RunSnpomics")
+@WebServlet("/RunSNPomics")
 public class RunSnpomics extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -33,6 +42,7 @@ public class RunSnpomics extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		out.println("There's Nothing Here");
 		out.close();
+		doPost(request,response);
 	}
 
 	/**
@@ -40,27 +50,8 @@ public class RunSnpomics extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charset=UTF-8");
-		String[] name = request.getParameterValues("file");
-		String[] id = request.getParameterValues("id");
-		PrintWriter out = response.getWriter();
-		if(name.length != 1) out.println("Incorrect Number of values in name");
-		else{
-			try{
-			
-				runSNPomics(name[0]);
-			}
-			catch(Exception e){
-				e.printStackTrace();
-				out.println("There was an error the annotator");
-			}
-			out.println("<h2>Completed Successfully!</h2>");
-			out.println("<form action=\"/CohortTool/StartAnalysis\" method=\"post\">");
-            out.println("<input type=\"hidden\" name=\"file\" value=\""+name[0]+"\">");
-            out.println("<input type=\"hidden\" name=\"if\" value=\""+id[0]+"\">");
-            out.println("<input type=\"submit\" value=\"continue\">");
-            out.println("</form>");
-		}
-		out.close();
+		String name = request.getParameter("filename");
+		runSNPomics(name);
 	}
 	
 	private void runSNPomics(String filename) throws IOException{

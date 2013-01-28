@@ -9,11 +9,8 @@ import com.mongodb.*;
 public class Individual {
 
 	public void addMutation(Mutation m){
-		if(this.mutations!=null) mutations.add( (PatientMutation) m);
-		else{
-			this.mutations = new ArrayList<PatientMutation>();
-			mutations.add( (PatientMutation) m);
-		}
+		if(this.mutations==null) this.mutations = new ArrayList<PatientMutation>();
+		mutations.add( (PatientMutation) m);
 	}
 	
 	public void setMutations(List<PatientMutation> m){
@@ -68,7 +65,11 @@ public class Individual {
 		this.mutations = new ArrayList<PatientMutation>();
 		this.mother=null;
 		this.father=null;
-		this.isAfflicted = (Boolean) o.get("isAfflicted");
+		try{
+			this.isAfflicted = (Boolean) o.get("isAfflicted");		}
+		catch(Exception e){
+			this.isAfflicted=false;
+		}
 		this.id= (String) o.get("id");
 	}
 	
@@ -76,7 +77,7 @@ public class Individual {
 		this.setId(id.replace(".","_"));
 	}
 	
-	public BasicDBObject getBson(){
+	public BasicDBObject getBSON(){
 		BasicDBObject info = new BasicDBObject();
 		info.append("id",this.getId());
 		if(getMother()!=null)
@@ -84,16 +85,25 @@ public class Individual {
 		if(getFather()!=null)
 			info.append("father",this.getFather().id);
 		info.append("isAfflicted",this.isAfflicted());
-		info.append("Gender",this.getSex() ? "Female":"Male");
-		if(getMutations()!=null&&this.getMutations().size()>0){
-			ArrayList<PatientMutation> m = (ArrayList<PatientMutation>) this.getMutations();
-			info.append("mutations",m);
+		info.append("Gender",this.getSex());
+		
+		try{
+			this.mutations.size();
 		}
+		catch(Exception e){
+			this.mutations = new ArrayList<PatientMutation>();
+		}
+		if(this.mutations.size()>0){
+			BasicDBObject muts = new BasicDBObject();
+			for(PatientMutation pm: this.mutations) muts.put(pm.toString(),pm.toBSON());
+			info.put("mutations",muts);
+		}
+		
 		return info;
 	}
 	
-	public boolean getSex() {
-		return sex;
+	public String getSex() {
+		return sex ? "female":"male";
 	}
 
 	public void setSex(boolean sex) {
@@ -106,6 +116,14 @@ public class Individual {
 
 	public void setFamilyId(String familyId) {
 		this.familyId = familyId;
+	}
+	
+	public int countMutations(){
+		try{
+		return this.mutations.size();
+		}catch(Exception e){
+			return 0;
+		}
 	}
 
 	private List<PatientMutation> mutations;

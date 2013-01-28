@@ -27,7 +27,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="/CohortTool/index.html">Cohort Analyzer</a>
+          <a class="brand" href="/CohortTool/index.jsp">Cohort Analyzer</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
               <li><a href="/CohortTool/">Home</a></li>

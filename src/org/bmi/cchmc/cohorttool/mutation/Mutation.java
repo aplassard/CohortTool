@@ -3,10 +3,9 @@ package org.bmi.cchmc.cohorttool.mutation;
 
 public abstract class Mutation {
 	
-	private String reference;
-	private String chr;
-	private int location;
-	private Object alternate;
+	protected String reference;
+	protected String chr;
+	protected int location;
 		
 	public abstract void addAlternate(String m);
 
@@ -34,8 +33,8 @@ public abstract class Mutation {
 		this.location = location;
 	}
 
-	public Object getAlternate() {
-		return alternate;
-	}
+	/**
+	 * @param alternate the alternate to set
+	 */
 	
 }

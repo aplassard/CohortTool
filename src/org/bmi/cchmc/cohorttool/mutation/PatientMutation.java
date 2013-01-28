@@ -1,5 +1,7 @@
 package org.bmi.cchmc.cohorttool.mutation;
 
+import com.mongodb.BasicDBObject;
+
 
 public class PatientMutation extends Mutation {
 
@@ -29,11 +31,13 @@ public class PatientMutation extends Mutation {
 	public String getOutputForm(){
 		String vcfForm="";
 		vcfForm += this.getChr();
-		vcfForm+=".";
+		vcfForm+="_";
 		vcfForm+=this.getLocation();
 		vcfForm+=this.getReference();
 		vcfForm+="->";
 		vcfForm+=this.getAlternate();
+		vcfForm+=",";
+		vcfForm+=homozygous ?  "hom" : "het"; 
 		return vcfForm;
 	}
 	
@@ -47,5 +51,19 @@ public class PatientMutation extends Mutation {
 		this.alternate = alt;
 		this.homozygous = h;
 		this.setLocation(loc);
+	}
+	
+	public String toString(){
+		return getOutputForm();
+	}
+	
+	public BasicDBObject toBSON(){
+		BasicDBObject o = new BasicDBObject();
+		o.put("chr",getChr());
+		o.put("ref",getReference());
+		o.put("alt",getAlternate());
+		o.put("location",getLocation());
+		o.put("homozygous",isHomozygous());
+		return o;
 	}
 }

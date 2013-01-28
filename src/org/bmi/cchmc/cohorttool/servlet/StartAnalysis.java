@@ -3,9 +3,14 @@ package org.bmi.cchmc.cohorttool.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import org.bmi.cchmc.cohorttol.util.*;
+import org.bmi.cchmc.cohorttool.util.*;
 import org.bmi.cchmc.cohorttool.patient.PatientSet;
 import org.bson.types.ObjectId;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.MongoClient;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -45,14 +50,28 @@ public class StartAnalysis extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		String id = request.getParameterValues("id")[0];
 		PatientSet PS = new PatientSet(new ObjectId(id));
-		out.print(ServletUtilities.getBootStrapHeader("Start Analysis"));
-		String content="";
-		content+="<div class=\"container\">\n";
-		content+=ServletUtilities.getNormalNavbar();
-		content+="\n<div>\n";
-		content+="<h2 class=\"text-success\">Start Analysis</h2>";
-		out.print(ServletUtilities.getBootStrapEnd(content));
-		out.close();
+		String filename = request.getParameterValues("file")[0];
+		PS.getMutations(this.getServletContext().getRealPath("SNPomics/output/"+filename+".txt"));
+		try {
+			MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
+			DB db = mongoClient.getDB("CohortTool");
+	        DBCollection coll = db.getCollection("projects");
+	        ObjectId o = new ObjectId(id);
+	        coll.findAndModify(new BasicDBObject("_id",o),PS.getBSON());
+	        out.print(ServletUtilities.getBootStrapHeader("Start Analysis"));
+			String content="";
+			content+="<div class=\"container\">\n";
+			content+=ServletUtilities.getNormalNavbar();
+			content+="\n<div>\n";
+			content+="<h2 class=\"text-success\">Start Analysis</h2>\n";
+			content+=PS.getHTMLTable();
+			out.print(ServletUtilities.getBootStrapEnd(content));
+			out.close();
+		}catch(Exception e){
+			e.printStackTrace();
+			out.println("Something went wrong");
+		}
+		
 	}
 
 }
