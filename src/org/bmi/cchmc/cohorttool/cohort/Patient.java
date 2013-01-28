@@ -31,6 +31,19 @@ public class Patient {
 		this.project = project;
 	}
 	
+	public Patient(DBObject o) {
+		this.mutations = new ArrayList<PatientMutation>();
+		this.mother=(String) o.get("mother");
+		this.father=(String) o.get("father");
+		try{
+			this.afflicted = (Boolean) o.get("isAfflicted");
+		}
+		catch(Exception e){
+			this.afflicted=false;
+		}
+		this.id= (String) o.get("id");
+	}
+
 	public void setFather(String father){
 		this.father = father;
 	}

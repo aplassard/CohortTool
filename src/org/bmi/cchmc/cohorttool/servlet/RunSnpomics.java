@@ -4,21 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
-
-import org.bmi.cchmc.cohorttool.util.ServletUtilities;
 
 /**
  * Servlet implementation class RunSnpomics
@@ -42,7 +33,6 @@ public class RunSnpomics extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		out.println("There's Nothing Here");
 		out.close();
-		doPost(request,response);
 	}
 
 	/**
@@ -52,6 +42,7 @@ public class RunSnpomics extends HttpServlet {
 		response.setContentType("text/html;charset=UTF-8");
 		String name = request.getParameter("filename");
 		runSNPomics(name);
+		request.getRequestDispatcher("/LoadInfo.jsp").forward(request,response);
 	}
 	
 	private void runSNPomics(String filename) throws IOException{

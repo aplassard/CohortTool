@@ -73,8 +73,6 @@ public class PatientSet {
 		for(Individual I: this.patients.values()) p.put(I.getId(),I.getBSON());
 		o.put("Patients",p);
 		p = new BasicDBObject();
-		if(hasMutations) for(FileMutation pm: this.mutations) p.put(pm.toString(),pm.getBSON());
-		o.put("Mutations",p);
 		return o;
 	}
 	
