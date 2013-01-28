@@ -4,8 +4,8 @@ public class ServletUtilities {
 	public static String getBootStrapHeader(String title){
 		String headers = "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>";
 		headers+=title;
-		headers+="</title>\n<link href=\"./bootstrap/css/bootstrap.css\" rel=\"stylesheet\">\n<style>\nbody {\npadding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */\n}\n</style>";
-	   	headers+="\n<link href=\"./bootstrap/css/bootstrap-responsive.css\" rel=\"stylesheet\">";
+		headers+="</title>\n<link href=\"http://twitter.github.com/bootstrap/assets/css/bootstrap.css\" rel=\"stylesheet\">\n<style>\nbody {\npadding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */\n}\n</style>";
+	   	headers+="\n<link href=\"http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css\" rel=\"stylesheet\">";
 	   	headers+="\n<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->";
 	   	headers+="\n<!--[if lt IE 9]>";
 	   	headers+="\n<script src=\"http://html5shim.googlecode.com/svn/trunk/html5.js\"></script>";
@@ -21,7 +21,10 @@ public class ServletUtilities {
 		ends+="<!-- Le javascript";
 		ends+="\n================================================== -->";
 		ends+="\n<!-- Placed at the end of the document so the pages load faster -->";
+		ends+="<script src=\"http://twitter.github.com/bootstrap/assets/js/bootstrap.js\"></script>";
+		/*
 		ends+="\n<script src=\"./bootstrap/js/jquery.js\"></script>";
+		ends+="\n<script src=\"./bootstrap/js/bootstrap.js\"></script>";
 		ends+="\n<script src=\"./bootstrap/js/bootstrap-transition.js\"></script>";
 		ends+="\n<script src=\"./bootstrap/js/bootstrap-alert.js\"></script>";
 		ends+="\n<script src=\"./bootstrap/js/bootstrap-modal.js\"></script>";
@@ -34,7 +37,7 @@ public class ServletUtilities {
 		ends+="\n<script src=\"./bootstrap/js/bootstrap-collapse.js\"></script>";
 		ends+="\n<script src=\"./bootstrap/js/bootstrap-carousel.js\"></script>";
 		ends+="\n<script src=\"./bootstrap/js/bootstrap-typeahead.js\"></script>";
-
+		*/
 		ends+="\n</body>";
 		ends+="\n</html>";
 		return ends;

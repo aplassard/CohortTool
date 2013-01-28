@@ -53,6 +53,7 @@ public class FileMutation extends Mutation {
 		o.put("CDNA",this.CDNA);
 		o.put("Protein",this.Protein);
 		o.put("gene",this.genes);
+		o.put("rsID", this.rsID);
 		return o;
 	}
 }

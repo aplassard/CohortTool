@@ -17,6 +17,20 @@ public class Patient {
 	private boolean mutationsInDatabase=false;
 	private String project;
 	private boolean afflicted;
+	private int mutationCount=0;
+	
+	public void setMutationCount(){
+		try{
+			this.mutationCount = mutations.size();
+		}catch (Exception e){
+			this.mutationCount=0;
+		}
+	}
+	
+	public int getMutationCount(){
+		setMutationCount();
+		return this.mutationCount;
+	}
 	
 	public Patient() {
 		
@@ -42,6 +56,7 @@ public class Patient {
 			this.afflicted=false;
 		}
 		this.id= (String) o.get("id");
+		this.gender = o.get("Gender").equals("female") ? true : false;
 	}
 
 	public void setFather(String father){
@@ -65,7 +80,7 @@ public class Patient {
 	}
 	
 	public String getGender(){
-		return gender ? "mother" : "father";
+		return gender ? "female" : "male";
 	}
 
 	public String getId(){
@@ -109,7 +124,13 @@ public class Patient {
 
 	public BasicDBObject getBSON(){
 		BasicDBObject o = new BasicDBObject();
-		
+		o.put("id", this.id);
+		o.put("mutation count",this.mutationCount);
+		if(this.mother!=null) o.put("mother",this.mother);
+		if(this.father!=null) o.put("father", this.father);
+		o.put("project",this.project);
+		o.put("afflicted",this.afflicted);
+		o.put("gender", this.getGender());
 		return o;
 	}
 
@@ -131,5 +152,9 @@ public class Patient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public ArrayList<PatientMutation> getMutations(){
+		return this.mutations;
 	}
 }

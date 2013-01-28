@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.bmi.cchmc.cohorttool.cohort.Cohort;
+import org.bmi.cchmc.cohorttool.util.ServletUtilities;
+
 import com.mongodb.*;
 
 /**
@@ -39,7 +42,6 @@ public class LoadInfo extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String name = request.getParameter("filename");
-		PrintWriter out = response.getWriter();
 		MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
         DB db = mongoClient.getDB("CohortTool");
         DBCollection projects = db.getCollection("projects");
@@ -49,7 +51,13 @@ public class LoadInfo extends HttpServlet {
         Set<String> patientIds = patients.keySet();
         System.out.println("Patients: ");
         for(String K: patientIds) System.out.println(K + ": "+patients.get(K));
-		
+		Cohort C = new Cohort(p);
+		System.out.println("Loading Mutations from file "+this.getServletContext().getRealPath("SNPomics/output/"+name+".txt"));
+		C.getMutations(this.getServletContext().getRealPath("SNPomics/output/"+name+".txt"));
+		C.loadMutationsIntoDatabase();
+		C.loadPatientMutationsIntoDatabase();
+		request.setAttribute("patientset", C.getHTMLTable());
+		request.getRequestDispatcher("/StartAnalysis.jsp").forward(request,response);
 	}
 
 }

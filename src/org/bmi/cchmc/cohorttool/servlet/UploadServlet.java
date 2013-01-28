@@ -159,6 +159,7 @@ public class UploadServlet extends HttpServlet {
         RequestDispatcher r = request.getRequestDispatcher("/RunSNPomics.jsp");
         System.out.println("Got dispatcher");
         request.setAttribute("filename",name+"-"+time);
+        request.setAttribute("id",  infoToLoad.get("_id").toString());
         
         r.forward(request,response);
 	}

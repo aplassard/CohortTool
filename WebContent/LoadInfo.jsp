@@ -46,11 +46,12 @@ padding-top: 60px; /* 60px to make the container go all the way to the bottom of
 <h2 class="">Info is being loaded into the database</h2>
 <br><h3 class="">This may take a while, so watch Star Wars Episode 5 while you wait!</h3>
 <br>
-<img src="./content/StarWars5.gif" alt="Star Wars" /><br><br>
+<img src="${pageContext.request.contextPath}/content/StarWars5.gif" alt="Star Wars" /><br><br>
 </div>
 </div>
 <form name="auto" action="/CohortTool/LoadInfo" method="POST">  
-    <input type="hidden" name="filename" value="<%=request.getParameter("filename")%>">  
+    <input type="hidden" name="filename" value="<%=request.getParameter("filename")%>">
+    <input type="hidden" name="id" value="<%=request.getParameter("id") %>">
 </form>  
 <!-- this script submits the form AFTER it has been completely loaded -->  
 <script>  
