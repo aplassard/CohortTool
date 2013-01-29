@@ -44,9 +44,9 @@ padding-top: 60px; /* 60px to make the container go all the way to the bottom of
 
 <div class="container">
 <h2 class="">Info is being loaded into the database</h2>
-<br><h3 class="">This may take a while, so watch Star Wars Episode 5 while you wait!</h3>
+<br><h3 class="">This may take a while, so watch Star Wars Episode 6 while you wait!</h3>
 <br>
-<img src="${pageContext.request.contextPath}/content/StarWars5.gif" alt="Star Wars" /><br><br>
+<img src="localhost:8080${pageContext.request.contextPath}/content/StarWars6.gif" alt="Star Wars" /><br><br>
 </div>
 </div>
 <form name="auto" action="/CohortTool/LoadInfo" method="POST">  

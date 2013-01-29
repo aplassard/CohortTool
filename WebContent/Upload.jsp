@@ -40,16 +40,18 @@ padding-top: 60px; /* 60px to make the container go all the way to the bottom of
 </div>
 </div>
 </div>
+<div class="well span8">
 
 <div class="container">
-<h2 class="">Annotating VCF</h2>
-<br><h3 class="">This may take a while, so watch Star Wars Episode 5 while you wait!</h3>
+<h2 class="">Info is being loaded into the database</h2>
+<br><h3 class="">This may take a while, so watch Star Wars Episode 4 while you wait!</h3>
 <br>
-<img src="localhost:8080${pageContext.request.contextPath}/content/StarWars5.gif" alt="Star Wars"><br><br>
+<img src="localhost:8080${pageContext.request.contextPath}/content/StarWars4.gif" alt="Star Wars" /><br><br>
 </div>
-<form name="auto" action="/CohortTool/RunSNPomics" method="POST">  
-    <input type="hidden" name="filename" value="<%=request.getAttribute("filename")%>"> 
-    <input type="hidden" name="id" value="<%=request.getAttribute("id") %>">
+</div>
+<form name="auto" action="/CohortTool/upload" method="POST">  
+    <input type="hidden" name="filename" value="<%=request.getParameter("filename")%>">
+    <input type="hidden" name="id" value="<%=request.getParameter("id") %>">
 </form>  
 <!-- this script submits the form AFTER it has been completely loaded -->  
 <script>  

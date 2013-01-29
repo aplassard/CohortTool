@@ -1,8 +1,12 @@
 package org.bmi.cchmc.cohorttool.mutation;
 
+import java.util.AbstractCollection;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 public class FileMutation extends Mutation {
 	private String rsID=null;
@@ -32,6 +36,41 @@ public class FileMutation extends Mutation {
 		this.Protein = Protein;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public FileMutation(DBObject next) {
+		this.rsID=(String) next.get("rsID");
+		this.alternate= new HashSet<String>();
+		ArrayList<String> a = (ArrayList<String>) next.get("alt");
+		for(String al: a) this.alternate.add(al);
+		a = (ArrayList<String>) next.get("gene");
+		if(a!=null){
+			this.genes = new String[a.size()];
+			for (int i = 0; i < a.size(); i++) {
+				String al = a.get(i);
+				this.genes[i]=al;
+			}
+		} else this.genes=null;
+		if(a!=null){
+			a = (ArrayList<String>) next.get("CDNA");
+			this.CDNA = new String[a.size()];
+			for (int i = 0; i < a.size(); i++) {
+				String al = a.get(i);
+				this.CDNA[i]=al;
+			}
+		} else this.CDNA=null;
+		if(a!=null){
+			a = (ArrayList<String>) next.get("Protein");
+			this.Protein = new String[a.size()];
+			for (int i = 0; i < a.size(); i++) {
+				String al = a.get(i);
+				this.Protein[i]=al;
+			}
+		} else this.Protein = null;
+		this.chr = (String) next.get("chr");
+		this.reference = (String) next.get("ref");
+		this.location = (Integer) next.get("location");
+	}
+
 	@Override
 	public String toString(){
 		String vcfForm="";

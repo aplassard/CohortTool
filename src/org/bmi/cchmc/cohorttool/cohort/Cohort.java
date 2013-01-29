@@ -5,9 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.bmi.cchmc.cohorttool.mutation.FileMutation;
@@ -18,6 +21,7 @@ import org.bson.types.ObjectId;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
@@ -201,6 +205,28 @@ public class Cohort {
 			}
 		}
 	}
+
+	public void getMutationsFromDataBase(){
+		try {
+			this.mutations = new ArrayList<FileMutation>();
+			System.out.println("Started getMutationsFromDataBase");
+			MongoClient MC = new MongoClient("localhost",27017);
+			DB db = MC.getDB("CohortTool");
+			DBCollection mutations = db.getCollection("mutations");
+			DBCollection patientMutations = db.getCollection("patientmutations");
+			System.out.println(this.getQuery());
+			DBCursor cursor = mutations.find(this.getQuery());
+			FileMutation fm;
+			while(cursor.hasNext()){
+				fm = new FileMutation(cursor.next());
+				System.out.println(fm.toString());
+				this.mutations.add(fm);
+			}
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public String getHTMLTable(){
 		String o = "";
@@ -253,5 +279,13 @@ public class Cohort {
 		o += "</table>";
 		o += "</div>";
 		return o;
+	}
+
+	public static void main(String[] args) throws UnknownHostException{
+		BasicDBObject o = new BasicDBObject("Analysis Name" , "test-1359412758355");
+		BasicDBObject p = (BasicDBObject) new MongoClient("localhost",27017).getDB("CohortTool").getCollection("projects").findOne(o);
+		
+		Cohort C = new Cohort(p);
+		C.getMutationsFromDataBase();
 	}
 }
