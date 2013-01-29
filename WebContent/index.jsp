@@ -43,7 +43,7 @@
 
       <h2>Welcome to the Cohort Analyzer for Large Scale Mendelian Diseases</h2>
       <div>
-      <form method="post" action="/CohortTool/Upload.jsp" enctype="multipart/form-data">
+      <form method="post" action="/CohortTool/upload" enctype="multipart/form-data">
       VCF File: <input type="file" name="vcf">
       PED File: <input type="file" name="ped"> 
       <div id="example" class="modal hide fade in" style="display: none; ">

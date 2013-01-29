@@ -1,8 +1,6 @@
 package org.bmi.cchmc.cohorttool.mutation;
 
-import java.util.AbstractCollection;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 
 import com.mongodb.BasicDBObject;
@@ -17,7 +15,15 @@ public class FileMutation extends Mutation {
 	public FileMutation() {
 		this.alternate=new HashSet<String>();
 	}
+	
+	public boolean hasRSID(){
+		return rsID!=null;
+	}
 
+	public HashSet<String> getAlternate(){
+		return this.alternate;
+	}
+	
 	@Override
 	public void addAlternate(String m) {
 		this.alternate.add(m);
@@ -41,8 +47,12 @@ public class FileMutation extends Mutation {
 		this.rsID=(String) next.get("rsID");
 		this.alternate= new HashSet<String>();
 		ArrayList<String> a = (ArrayList<String>) next.get("alt");
-		for(String al: a) this.alternate.add(al);
-		a = (ArrayList<String>) next.get("gene");
+		if(a!=null){
+			for(String al: a){
+				this.alternate.add(al);
+			}
+			a = (ArrayList<String>) next.get("gene");
+		}
 		if(a!=null){
 			this.genes = new String[a.size()];
 			for (int i = 0; i < a.size(); i++) {
@@ -94,5 +104,9 @@ public class FileMutation extends Mutation {
 		o.put("gene",this.genes);
 		o.put("rsID", this.rsID);
 		return o;
+	}
+	
+	public String[] getProtein(){
+		return this.Protein;
 	}
 }

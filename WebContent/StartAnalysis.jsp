@@ -7,7 +7,7 @@
 <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet" type="text/css" />
 <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet" type="text/css" />
 <meta charset=utf-8 />
-<title>JS Bin</title>
+<title>Start Analysis</title>
 </head>
 <body>
 <div class="navbar navbar-inverse navbar-fixed-top">

@@ -5,17 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-
 import org.bmi.cchmc.cohorttool.mutation.FileMutation;
 import org.bmi.cchmc.cohorttool.mutation.PatientMutation;
-import org.bmi.cchmc.cohorttool.patient.Individual;
+import org.bmi.cchmc.cohorttool.mutation.SimpleMutation;
 import org.bson.types.ObjectId;
 
 import com.mongodb.BasicDBObject;
@@ -44,10 +41,8 @@ public class Cohort {
 	
 
 	public Cohort(BasicDBObject P){
-		System.out.println(P.toString());
 		DBObject Patients = (DBObject) ((DBObject) P.get("Patient Info")).get("Patients");
         Set<String> keys = Patients.keySet();
-        System.out.println(keys);
         this.patients = new HashMap<String,Patient>();
         Patient I;
         for(String K : keys){
@@ -200,7 +195,7 @@ public class Cohort {
 				}
 				b = PM.toBSON();
 				b.put("patient",P.getId());
-				b.put("Analysis Name", this.name);
+				b.put("name", this.name);
 				mutations.insert(b);
 			}
 		}
@@ -209,23 +204,36 @@ public class Cohort {
 	public void getMutationsFromDataBase(){
 		try {
 			this.mutations = new ArrayList<FileMutation>();
-			System.out.println("Started getMutationsFromDataBase");
+			System.out.println("Started loading file mutations");
 			MongoClient MC = new MongoClient("localhost",27017);
 			DB db = MC.getDB("CohortTool");
 			DBCollection mutations = db.getCollection("mutations");
 			DBCollection patientMutations = db.getCollection("patientmutations");
-			System.out.println(this.getQuery());
 			DBCursor cursor = mutations.find(this.getQuery());
 			FileMutation fm;
 			while(cursor.hasNext()){
-				fm = new FileMutation(cursor.next());
-				System.out.println(fm.toString());
+				BasicDBObject obj = (BasicDBObject) cursor.next();
+				fm = new FileMutation(obj);
 				this.mutations.add(fm);
+			}
+			
+			cursor = patientMutations.find(this.getQuery());
+			PatientMutation pm;
+			Patient P;
+			System.out.println("Started loading patient mutations");
+			while(cursor.hasNext()){
+				BasicDBObject obj = (BasicDBObject) cursor.next();
+				pm = new PatientMutation(obj);
+				P = this.patients.get(obj.getString("patient"));
+				P.addMutation(pm);
+				this.patients.remove(obj.getString("patient"));
+				this.patients.put(obj.getString("patient"), P);
 			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("Done");
 	}
 	
 	public String getHTMLTable(){
@@ -244,36 +252,42 @@ public class Cohort {
 		o += "\t\t</tr>";
 		o += "\t</thead>\n";
 		o += "\t<tbody>\n";
-		for(Patient I: this.patients.values()){
-			o += "\t\t<tr>";
-			o += "\t\t<td>";
-			o += I.getId();
-			o += "\t\t</td>\n";
-			o += "\t\t<td>";
-			o += I.getMutationCount();
-			o += "\t\t</td>\n";
-			o += "\t\t<td>";
-			try{
-			o += I.getFather();
-			}catch(Exception e){
-				o += " ";
-			}
-			o += "\t\t</td>\n";
-			o += "\t\t<td>";
-			try{
-				o += I.getMother();
+		Patient I;
+		Object[] n =  this.patients.keySet().toArray();
+		Arrays.sort(n);
+		for(Object K: n){
+			I=this.patients.get(K);
+			if(I.getMutationCount()>0){
+				o += "\t\t<tr>";
+				o += "\t\t<td>";
+				o += I.getId();
+				o += "\t\t</td>\n";
+				o += "\t\t<td>";
+				o += I.getMutationCount();
+				o += "\t\t</td>\n";
+				o += "\t\t<td>";
+				try{
+				o += I.getFather()==null ? "" : I.getFather();
 				}catch(Exception e){
 					o += " ";
 				}
-			o += "\t\t</td>\n";
-			o += "\t\t<td>";
-			if(I.isAfflicted()) o+="Afflicted";
-			else o += "Not Afflicted";
-			o += "\t\t</td>\n";
-			o += "\t\t<td>";
-			o += I.getGender();
-			o += "\t\t</td>\n";
-			o += "\t\t</tr>\n";
+				o += "\t\t</td>\n";
+				o += "\t\t<td>";
+				try{
+					o += I.getMother()==null ? "" : I.getMother();
+					}catch(Exception e){
+						o += " ";
+					}
+				o += "\t\t</td>\n";
+				o += "\t\t<td>";
+				if(I.isAfflicted()) o+="Afflicted";
+				else o += "Not Afflicted";
+				o += "\t\t</td>\n";
+				o += "\t\t<td>";
+				o += I.getGender();
+				o += "\t\t</td>\n";
+				o += "\t\t</tr>\n";
+			}
 		}
 		o += "\t</tbody>";
 		o += "</table>";
@@ -281,11 +295,30 @@ public class Cohort {
 		return o;
 	}
 
+	public HashMap<String,Patient> getPatients(){
+		return this.patients;
+	}
+	
 	public static void main(String[] args) throws UnknownHostException{
-		BasicDBObject o = new BasicDBObject("Analysis Name" , "test-1359412758355");
+		BasicDBObject o = new BasicDBObject("Analysis Name" , "test-1359487437014");
 		BasicDBObject p = (BasicDBObject) new MongoClient("localhost",27017).getDB("CohortTool").getCollection("projects").findOne(o);
 		
 		Cohort C = new Cohort(p);
 		C.getMutationsFromDataBase();
+		
+		HashMap<SimpleMutation,FileMutation> n = C.getPatientFileHashMap();
+		for(SimpleMutation SM: n.keySet()){
+			System.out.println(SM.toString()+" --> " + n.get(SM).toString());
+		}
+	}
+
+	public HashMap<SimpleMutation,FileMutation> getPatientFileHashMap(){
+		HashMap<SimpleMutation,FileMutation> n = new HashMap<SimpleMutation,FileMutation>();
+		for(FileMutation FM: this.mutations){
+			for(String a: FM.getAlternate()){
+				n.put(new SimpleMutation(FM.getChr(),FM.getReference(),a,FM.getLocation()), FM);
+			}
+		}
+		return n;
 	}
 }

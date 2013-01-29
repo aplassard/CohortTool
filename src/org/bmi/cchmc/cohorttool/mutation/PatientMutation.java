@@ -53,6 +53,14 @@ public class PatientMutation extends Mutation {
 		this.setLocation(loc);
 	}
 	
+	public PatientMutation(BasicDBObject obj) {
+		this.chr=(String) obj.get("chr");
+		this.reference=(String) obj.get("ref");
+		this.alternate=(String) obj.getString("alt");
+		this.homozygous=obj.getBoolean("homozygous");
+		this.location=obj.getInt("location");
+	}
+
 	public String toString(){
 		return getOutputForm();
 	}
