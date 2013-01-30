@@ -1,5 +1,12 @@
 package org.bmi.cchmc.cohorttool.util;
 
+import java.net.UnknownHostException;
+
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.MongoClient;
+
 public class ServletUtilities {
 	public static String getBootStrapHeader(String title){
 		String headers = "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>";
@@ -71,5 +78,31 @@ public class ServletUtilities {
 		header+="\n</div>";
 		header+="\n</div>";
 		return header;
+	}
+	
+	public static String getGeneLists(){
+		String o = "[ ";
+		try {
+			MongoClient MC = new MongoClient("localhost",27017);
+			DB db = MC.getDB("CohortTool");
+			DBCollection coll = db.getCollection("genesets");
+			DBCursor cursor = coll.find();
+			while(cursor.hasNext()){
+				o+="'";
+				o+=cursor.next().get("name");
+				o+="', ";
+			}
+			o+=" ]";
+			return o;
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
+	public static void main(String[] args){
+		System.out.println(getGeneLists());
 	}
 }

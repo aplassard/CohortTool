@@ -38,7 +38,9 @@ public class Analysis {
 
 	public void Run(){
 		if(this.granthamDistanceCutoff>0){
+			System.out.println("There were " + this.mutations.size()+" to start.");
 			runGrantham();
+			System.out.println("There were " + this.mutations.size()+" to end.");
 		}
 		if(!this.allowInDBSNP){
 			System.out.println("Running allow in DBSNP");
@@ -70,15 +72,10 @@ public class Analysis {
 		String[] AA;
 		for(String p: P){
 			if(p.contains("p.(")){
-				System.out.println("Protein: "+p);
 				AA=splitProtein(p);
 				if(AA.length>0){
 					AminoAcid a = AminoAcid.lookup(AA[0]);
 					AminoAcid b = AminoAcid.lookup(AA[AA.length-1]);
-					System.out.println("A: "+AA[0]);
-					System.out.println("B: "+AA[AA.length-1]);
-					System.out.println("A: "+a.toString());
-					System.out.println("B: "+b.toString());
 					if(GranthamDistance.get(a, b)>this.granthamDistanceCutoff) return true;
 				}
 			}
@@ -90,14 +87,12 @@ public class Analysis {
 		if(P.contains("(=)")||P.equals("")) return new String[0];
 		else{
 			P = P.split("\\(")[1];
-			System.out.println("Front Removed "+P);
 			P = P.split("\\)")[0];
-			System.out.println("End Removed "+P);
 			return P.split("[0-9]");
 		}
 	}
 	
-	public void runRemoveDBSNP(){
+	private void runRemoveDBSNP(){
 		ArrayList<SimpleMutation> toRemove = new ArrayList<SimpleMutation>();
 		for(SimpleMutation SM: this.mutations.keySet()){
 			FileMutation FM = this.mutations.get(SM);
@@ -115,15 +110,19 @@ public class Analysis {
 		this.allowHomozygous=t;
 	}
 	
+	private void runRemoveHet(){
+		
+	}
 	
 	public static void main(String[] args) throws UnknownHostException{
-		BasicDBObject o = new BasicDBObject("Analysis Name" , "test-1359487437014");
+		BasicDBObject o = new BasicDBObject("Analysis Name" , "test-1359517610543");
 		BasicDBObject p = (BasicDBObject) new MongoClient("localhost",27017).getDB("CohortTool").getCollection("projects").findOne(o);
 		
 		Cohort C = new Cohort(p);
 		C.getMutationsFromDataBase();
 		
 		Analysis A = new Analysis(C);
+		A.setGranthamDistanceCutoff(100);
 		A.setAllowInDBSNP(false);
 		A.Run();
 	}

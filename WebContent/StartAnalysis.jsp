@@ -1,3 +1,4 @@
+<%@page import="org.bmi.cchmc.cohorttool.util.ServletUtilities"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 
@@ -40,11 +41,18 @@
 
 		<div class="tab-content">
 		  <div class="tab-pane active" id="patients"><%=request.getAttribute("patientset") %></div>
-		  <div class="tab-pane" id="new">New Analysis</div>
+		  <div class="tab-pane" id="new">New Analysis</div><br>
+		  	<div class="well">
+		  		<input type="text" class="span3" id="search" data-provide="typeahead" data-items="100" />
+		  	</div>
 		</div>
 	</div>
 </div>
 <script src="http://code.jquery.com/jquery.min.js"></script>
 <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.js"></script>
+<script>
+ var lists = [ 'alpha-1,6-mannosyltransferase activity', 'trans-hexaprenyltranstransferase activity', 'single-stranded DNA specific endodeoxyribonuclease activity', 'lactase activity', 'alpha-1,2-mannosyltransferase activity',]; 
+$('#search').typeahead({source: lists})
+</script>
 </body>
 </html>
