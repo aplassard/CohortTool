@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.bmi.cchmc.cohorttool.mutation.AnalysisMutation;
 import org.bmi.cchmc.cohorttool.mutation.FileMutation;
 import org.bmi.cchmc.cohorttool.mutation.PatientMutation;
 import org.bmi.cchmc.cohorttool.mutation.SimpleMutation;
@@ -26,6 +28,7 @@ public class Cohort {
 
 	private HashMap<String,Patient> patients;
 	private ArrayList<FileMutation> mutations;
+	@SuppressWarnings("unused")
 	private boolean hasMutationsInDatabase = false;
 	private String name;
 	
@@ -320,5 +323,12 @@ public class Cohort {
 			}
 		}
 		return n;
+	}
+
+	public HashSet<AnalysisMutation> getAnalysisMutations(){
+		HashSet<AnalysisMutation> AM = new HashSet<AnalysisMutation>();
+		AnalysisMutation A;
+		
+		return AM;
 	}
 }

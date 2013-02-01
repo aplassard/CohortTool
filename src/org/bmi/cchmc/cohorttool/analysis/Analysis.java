@@ -6,6 +6,7 @@ import org.bmi.cchmc.cohorttool.cohort.Patient;
 import java.net.UnknownHostException;
 import java.util.*;
 
+import org.bmi.cchmc.cohorttool.mutation.AnalysisMutation;
 import org.bmi.cchmc.cohorttool.mutation.FileMutation;
 import org.bmi.cchmc.cohorttool.mutation.SimpleMutation;
 import org.bmi.cchmc.cohorttool.translation.*;
@@ -14,6 +15,16 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 
 public class Analysis {
+	
+	private HashSet<AnalysisMutation> mutations;
+	private HashSet<Patient> patients;
+	
+	public Analysis(Cohort C){
+		
+	}
+	
+	
+	/*
 	private HashMap<String,Patient> patients;
 	private HashMap<SimpleMutation,FileMutation> mutations;
 	private int blosum80Cutoff;
@@ -126,5 +137,6 @@ public class Analysis {
 		A.setAllowInDBSNP(false);
 		A.Run();
 	}
+	*/
 
 }

@@ -7,28 +7,43 @@ Affiliations: Cincinnati Children's Hospital
 			  University of Cincinnati Biomedical Engineering
 
 
-//Load Page:
-//	User loads vcf and ped
-//	User inputs username and analysis name
+Load Page:
+	User load name, username, vcf, ped
 	
-//Upload Page:
-//	Loads vcf and ped
-//	if vcf is .gz run gunzip
-//	load ped into database "projects"
-//	run SNPomics on vcf
-//		Play Star Wars gif
-	pull mutations from output file from SNPomics
-		get all info from them and dump them to collection "mutations"
-			protein
-			gene
-			CDNA
-			etc
-			id
-		load mutations for each patient into collection "patientmutations"
-			id
+Upload Page:
+	Load data onto server
+	
 
-Start Page:
-	Show info about patients
-	Start filterings / Analysis
-		
+Run SNPomics Page:
+	run SNPomics on VCF File
 	
+Load Info Page:
+	Validate that all patients present in VCF are also in PED
+	Build Cohort Model from VCF and PED
+	
+
+	
+Important Classes:
+	Cohort
+		HashMap<Location,AnalysisMutation>
+			AnalysisMutation
+				int location
+				String ref
+				ArrayList<String> alt
+				HashMap<String,PatientSpecificMutation> patients
+					PatientSpecificMutation
+						String alt;
+						boolean zygosity;
+				String[] genes
+				String[] CDNA
+				String[] Protein
+				String rsID
+		HashMap<String,Patient> patients
+			Patient
+				String id
+				String motherID
+				String fatherID
+				String gender
+				boolean afflicted
+				
+
