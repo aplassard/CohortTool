@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import org.bmi.cchmc.cohorttool.cohort.Cohort;
 import org.bmi.cchmc.cohorttool.patient.PatientSet;
 
 import com.mongodb.*;
@@ -141,26 +142,23 @@ public class UploadServlet extends HttpServlet {
         if (filename.endsWith(".gz")) gunzipFile(outputfile1);
         if(!validateFiles(name+"-"+time)){
         	out.println("Files did not validate");
-        	out.println("<br>Please Try again");
+        	out.println("<br>Please Try again</br>");
         	return;
         }
-        PatientSet ps = new PatientSet(outputfile2);
+        Cohort ps = new Cohort(outputfile2,name+"-"+time);
         BasicDBObject patientInfo = ps.getBSON();
-        BasicDBObject infoToLoad = new BasicDBObject();
         
-        infoToLoad.append("Patient Info", patientInfo);
-        infoToLoad.append("Username",user);
-        infoToLoad.append("VCF File Location",outputfile1);
-        infoToLoad.append("PED File Location",outputfile2);
-        infoToLoad.append("Time Loaded",time);
-        infoToLoad.append("Analysis Name",name+"-"+time);
-        coll.insert(infoToLoad);
-        System.out.println("Successfully added to database");
+        patientInfo.put("Username",user);
+        patientInfo.put("VCF File Location",outputfile1);
+        patientInfo.put("PED File Location",outputfile2);
+        patientInfo.put("Time Loaded",time);
+        coll.insert(patientInfo);
+        System.out.println("Successfully added to database: "+patientInfo.toString());
+        System.out.println();
         RequestDispatcher r = request.getRequestDispatcher("/RunSNPomics.jsp");
         System.out.println("Got dispatcher");
         request.setAttribute("filename",name+"-"+time);
-        request.setAttribute("id",  infoToLoad.get("_id").toString());
-        
+        request.setAttribute("id",  patientInfo.get("_id").toString());
         r.forward(request,response);
 	}
 	

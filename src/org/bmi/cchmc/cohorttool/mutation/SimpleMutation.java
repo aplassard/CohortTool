@@ -5,12 +5,10 @@ public class SimpleMutation extends Mutation {
 	protected String reference;
 	protected String chr;
 	protected int location;
-	private String alt;
 	
-	public SimpleMutation(String chr, String ref, String alt, int loc){
+	public SimpleMutation(String chr, String ref, int loc){
 		this.reference=ref;
 		this.chr=chr;
-		this.alt=alt;
 		this.location=loc;
 	}
 	
@@ -21,13 +19,12 @@ public class SimpleMutation extends Mutation {
 	}
 	
 	public String toString(){
-		return chr+"."+location+reference+"->"+alt;
+		return chr+"."+location+reference;
 	}
 
 	public SimpleMutation(PatientMutation PM){
 		this.reference=PM.getReference();
 		this.chr=PM.getChr();
-		this.alt=PM.getAlternate();
 		this.location=PM.getLocation();
 	}
 }

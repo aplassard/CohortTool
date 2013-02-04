@@ -1,5 +1,6 @@
 package org.bmi.cchmc.cohorttool.servlet;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Set;
@@ -45,8 +46,14 @@ public class LoadInfo extends HttpServlet {
 		MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
         DB db = mongoClient.getDB("CohortTool");
         DBCollection projects = db.getCollection("projects");
-        BasicDBObject p = (BasicDBObject) projects.findOne(new BasicDBObject("Analysis Name",name));
-        System.out.println(p.toString());
+        BasicDBObject p = (BasicDBObject) projects.findOne(new BasicDBObject("name",name));
+        Cohort C = new Cohort(p);
+        System.out.println(C.toString());
+        C.loadMutationsFromFile(new FileReader(this.getServletContext().getRealPath("SNPomics/output/"+name+".txt")));
+        C.loadMutationsIntoDatabase();
+        Cohort C1 = new Cohort(p);
+        C1.loadMutationsFromDatabase();
+        /*
         BasicDBObject patients = (BasicDBObject) ((BasicDBObject) p.get("Patient Info")).get("Patients");
         Set<String> patientIds = patients.keySet();
         System.out.println("Patients: ");
@@ -58,6 +65,7 @@ public class LoadInfo extends HttpServlet {
 		C.loadPatientMutationsIntoDatabase();
 		request.setAttribute("patientset", C.getHTMLTable());
 		request.getRequestDispatcher("/StartAnalysis.jsp").forward(request,response);
+		*/
 	}
 
 }

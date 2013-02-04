@@ -1,160 +1,75 @@
 package org.bmi.cchmc.cohorttool.cohort;
 
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import org.bmi.cchmc.cohorttool.mutation.PatientMutation;
-
-import com.mongodb.*;
+import com.mongodb.BasicDBObject;
 
 public class Patient {
+
+	private String id;
 	private String mother;
 	private String father;
-	private boolean gender; //female: true; male: false
-	private String id;
-	private ArrayList<PatientMutation> mutations=null;
-	private boolean mutationsInDatabase=false;
+	private String gender;
 	private String project;
-	private boolean afflicted;
+	private String family;
 	private int mutationCount=0;
+	private boolean afflicted;
 	
-	public void setMutationCount(){
-		try{
-			this.mutationCount = mutations.size();
-		}catch (Exception e){
-			this.mutationCount=0;
-		}
-	}
-	
-	public int getMutationCount(){
-		setMutationCount();
-		return this.mutationCount;
-	}
-	
-	public Patient() {
-		
-	}
-	
-	public Patient(String id, String mother, String father, String project, boolean gender, boolean afflicted){
+	public Patient(String id, String mother, String father, String family, String gender, String project, boolean afflicted) {
 		this.id = id;
 		this.mother = mother;
 		this.father = father;
 		this.gender = gender;
-		this.afflicted = afflicted;
 		this.project = project;
+		this.afflicted=afflicted;
+		this.family = family;
 	}
 	
-	public Patient(DBObject o) {
-		this.mutations = new ArrayList<PatientMutation>();
-		this.mother=(String) o.get("mother");
-		this.father=(String) o.get("father");
-		try{
-			this.afflicted = (Boolean) o.get("isAfflicted");
-		}
-		catch(Exception e){
-			this.afflicted=false;
-		}
-		this.id= (String) o.get("id");
-		this.gender = o.get("Gender").equals("female") ? true : false;
-	}
-
-	public void setFather(String father){
-		this.father = father;
-	}
-	
-	public void setMother(String mother){
-		this.mother = mother;
-	}
-	
-	public void setId(String id){
-		this.id = id;
-	}
-	
-	public String getFather(){
-		return this.father;
+	public String getID(){
+		return this.id;
 	}
 	
 	public String getMother(){
 		return this.mother;
 	}
 	
+	public String getFather(){
+		return this.father;
+	}
+	
 	public String getGender(){
-		return gender ? "female" : "male";
-	}
-
-	public String getId(){
-		return this.id;
-	}
-
-	public void setProject(String set){
-		this.project=set;
+		return this.gender;
 	}
 	
-	public void setAfflicted(boolean afflicted){
-		this.afflicted = afflicted;
-	}
-	
-	public boolean isAfflicted(){
-			return this.afflicted;
-		}
-	
-	public void addMutation(PatientMutation pm){
-		
-		if(this.mutationsInDatabase){
-			MongoClient mongoClient = null;
-			try {
-				mongoClient = new MongoClient( "localhost" , 27017 );
-				DB db = mongoClient.getDB("CohortTool");
-				DBCollection coll = db.getCollection("patientmutations");
-				BasicDBObject q = new BasicDBObject();
-				q.put("project",project);
-				q.put("id",id);
-				DBObject m = coll.findOne(q);
-				PatientMutation[] PM = (PatientMutation[]) m.get("mutations");
-				this.mutations = new ArrayList<PatientMutation>(Arrays.asList(PM));
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	        
-		} else if(this.mutations==null) this.mutations = new ArrayList<PatientMutation>();
-		this.mutations.add(pm);
+	public String getProject(){
+		return this.project;
 	}
 
+	public void setMutationCount(int n){
+		this.mutationCount=n;
+	}
+
+	public String toString(){
+		return this.getBSON().toString();
+	}
+	
 	public BasicDBObject getBSON(){
-		BasicDBObject o = new BasicDBObject();
-		o.put("id", this.id);
-		o.put("mutation count",this.mutationCount);
-		if(this.mother!=null) o.put("mother",this.mother);
-		if(this.father!=null) o.put("father", this.father);
-		o.put("project",this.project);
-		o.put("afflicted",this.afflicted);
-		o.put("gender", this.getGender());
-		return o;
-	}
-
-	public BasicDBObject getQuery(){
-		BasicDBObject q = new BasicDBObject();
-		q.put("project",this.project);
-		q.put("id",this.id);
-		return q;
-	}
-
-	public void loadMutations(){
-		try {
-			MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
-			DB db = mongoClient.getDB("CohortTool");
-	        DBCollection coll = db.getCollection("mutations");
-	        BasicDBObject m = (BasicDBObject) coll.findOne(this.getQuery());
-	        
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		BasicDBObject obj = new BasicDBObject();
+		obj.put("id",this.id);
+		obj.put("gender", this.gender);
+		obj.put("family",this.family);
+		if(this.mother!=null) obj.put("mother", this.mother);
+		if(this.family!=null) obj.put("father", this.family);
+		if(this.mutationCount >0) obj.put("mutationcount", this.mutationCount);
+		obj.put("afflicted",this.afflicted);
+		return obj;
 	}
 	
-	public ArrayList<PatientMutation> getMutations(){
-		return this.mutations;
+	public Patient(BasicDBObject o){
+		this.id = o.getString("id");
+		this.gender = o.getString("gender");
+		this.family = o.getString("family");
+		this.mother = o.getString("mother");
+		this.father = o.getString("father");
+		this.afflicted = o.getBoolean("afflicted");
+		this.mutationCount = o.containsField("mutationcount") ? o.getInt("mutationcount") : 0;
 	}
 }

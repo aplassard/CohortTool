@@ -74,4 +74,13 @@ public class PatientMutation extends Mutation {
 		o.put("homozygous",isHomozygous());
 		return o;
 	}
+
+	public boolean equals(SimpleMutation sm){
+		if(this.chr.equals(sm.chr)&&this.location==sm.location) return true;
+		else return false;
+	}
+	
+	public SimpleMutation getSimpleMutation(){
+		return new SimpleMutation(this.chr,this.reference,this.alternate,this.location);
+	}
 }
