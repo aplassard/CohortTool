@@ -2,6 +2,7 @@ package org.bmi.cchmc.cohorttool.util;
 
 import java.net.UnknownHostException;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -103,6 +104,40 @@ public class ServletUtilities {
 	}
 	
 	public static void main(String[] args){
-		System.out.println(getGeneLists());
+		getAvailableAnalyses("test-1360091727153");
+	}
+
+	public static void getAvailableAnalyses(String name){
+		MongoClient MC;
+		try {
+			MC = new MongoClient("localhost",27017);
+			DB db = MC.getDB("CohortTool");
+			DBCollection coll = db.getCollection("analysis");
+			DBCursor c = coll.find(new BasicDBObject("name",name));
+			while(c.hasNext()){
+				BasicDBObject o = (BasicDBObject) c.next();
+				System.out.println(o.get("name")+", analysis: "+o.getString("analysisname"));
+			}
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static String getAnalysisTabs(String name){
+		String o="";
+		try {
+			MongoClient MC = new MongoClient("localhost",27017);
+			DB db = MC.getDB("CohortTool");
+			DBCollection coll = db.getCollection("analysis");
+			DBCursor c = coll.find(new BasicDBObject("name",name));
+			while(c.hasNext()){
+				BasicDBObject b = (BasicDBObject) c.next();
+				o+="<li><a href=\"#"+b.get("analysisname")+"\" data-toggle=\"tab\">"+b.get("analysisname") + "</a></li>\n";
+			}
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return o;
 	}
 }

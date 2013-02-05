@@ -16,8 +16,24 @@ public class Analysis extends Cohort {
 
 	private String analysisName;
 	
+	public void removeDBSNP(){
+		ArrayList<SimpleMutation> toRemove = new ArrayList<SimpleMutation>();
+		for(SimpleMutation SM: this.mutations.keySet()){
+			AnnotatedMutation AM = this.mutations.get(SM);
+			if(AM.inDBSNP()) toRemove.add(SM);
+		}
+		for(SimpleMutation SM: toRemove) this.mutations.remove(SM);
+	}
+	
 	public void removeHeterozygous(){
-		
+		ArrayList<SimpleMutation> toRemove = new ArrayList<SimpleMutation>();
+		for(SimpleMutation SM: this.mutations.keySet()){
+			AnnotatedMutation AM = this.mutations.get(SM);
+			AM.removeHeterozygous();
+			if(AM.getPatientCount()>0)this.mutations.put(SM, AM);
+			else toRemove.add(SM);
+		}
+		for(SimpleMutation SM: toRemove) this.mutations.remove(SM);
 	}
 	
 	public Analysis(BasicDBObject o,String name) {
@@ -44,7 +60,6 @@ public class Analysis extends Cohort {
 			coll.findAndRemove(this.getAnalysisQuery());
 			coll.insert(this.getAnalysisBSON());
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -54,9 +69,13 @@ public class Analysis extends Cohort {
 			MongoClient MC = new MongoClient("localhost",27017);
 			DB db = MC.getDB("CohortTool");
 			DBCollection coll = db.getCollection("analysismutations");
-			coll.insert(this.getAnalysisBSON());
+			for(AnnotatedMutation AM: this.mutations.values()){
+				BasicDBObject obj = AM.getBSON();
+				obj.putAll(this.getAnalysisQuery().toMap());
+				obj.putAll(this.getQuery().toMap());
+				coll.insert(obj);
+			}
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

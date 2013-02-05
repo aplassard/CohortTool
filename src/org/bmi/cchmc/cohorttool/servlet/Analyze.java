@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.bmi.cchmc.cohorttool.analysis.*;
+import org.bmi.cchmc.cohorttool.cohort.Cohort;
+
 import com.mongodb.*;
 
 /**
@@ -40,19 +42,22 @@ public class Analyze extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		PrintWriter out = response.getWriter();
-		for(String K: request.getParameterMap().keySet()){
-			out.println(K+": "+request.getParameter(K));
-		}
 		MongoClient MC = new MongoClient("localhost",27017);
 		DB db = MC.getDB("CohortTool");
 		DBCollection coll = db.getCollection("projects");
 		BasicDBObject o = (BasicDBObject) coll.findOne(new BasicDBObject("name", request.getParameterValues("id")[0]));
 		Analysis A = new Analysis(o, request.getParameterValues("name")[0]);
 		A.loadMutationsFromDatabase();
+		Cohort C = new Cohort(o);
+		C.loadMutationsFromDatabase();
+		C.getMutationCounts();
 		if(request.getParameterMap().containsKey("homozygous")) A.removeHomozygous();
+		if(request.getParameterMap().containsKey("heterozygous")) A.removeHeterozygous();
+		if(request.getParameterMap().containsKey("rsID")) A.removeDBSNP();
 		A.loadIntoDatabase();
-		out.close();
+		request.setAttribute("patientset", C.getHTMLTable());
+		request.setAttribute("id", request.getParameterValues("id")[0]);
+		request.getRequestDispatcher("/ContinueAnalysis.jsp").forward(request,response);
 	}
 
 }

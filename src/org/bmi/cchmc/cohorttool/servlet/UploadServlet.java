@@ -125,9 +125,11 @@ public class UploadServlet extends HttpServlet {
         DBCollection coll = db.getCollection("projects");
         Scanner s = new Scanner(p3.getInputStream());
         String name = s.nextLine();
+        name = name.replace(' ', '_');
         s.close();
         s = new Scanner(p4.getInputStream());
         String user = s.nextLine();
+        user = user.replace(' ', '_');
         s.close();
         java.util.Date date= new java.util.Date();
     	long time = (new Timestamp(date.getTime())).getTime();

@@ -105,4 +105,16 @@ public class AnnotatedMutation extends Mutation {
 	public int getPatientCount(){
 		return this.patients.size();
 	}
+
+	public void removeHeterozygous() {
+		ArrayList<SimplePatientMutation> toRemove = new ArrayList<SimplePatientMutation>();
+		for(SimplePatientMutation SPM: this.patients){
+			if(!SPM.homozygous) toRemove.add(SPM);
+		}
+		for(SimplePatientMutation SPM: toRemove) this.patients.remove(SPM);
+	}
+	
+	public boolean inDBSNP(){
+		return this.rsID!=null;
+	}
 }

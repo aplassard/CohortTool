@@ -8,7 +8,7 @@
 <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet" type="text/css" />
 <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet" type="text/css" />
 <meta charset=utf-8 />
-<title>Start Analysis</title>
+<title>Continue Analysis</title>
 </head>
 <body>
 <div class="navbar navbar-inverse navbar-fixed-top">
@@ -36,6 +36,12 @@
 		<ul class="nav nav-pills">
 		  <li class="active"><a href="#patients" data-toggle="tab">Patient Info</a></li>
 		  <li><a href="#new" data-toggle="tab">Add New Analysis</a></li>
+		  <li class="dropdown">
+		  	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Available Analyses<b class="caret"></b></a>
+		  	<ul class="dropdown-menu">
+				<%= ServletUtilities.getAnalysisTabs((String) request.getAttribute("id")) %>
+		  	</ul>
+		  </li>
 		</ul>
 
 		<div class="tab-content">
@@ -55,7 +61,7 @@
 		  				<label class="checkbox">
 		  					<input type="checkbox" name="rsID"/> Remove Mutations in dbSNP
 		  				</label>
-		  				<input type="hidden" name="id" value="<%= request.getAttribute("name") %>" />
+		  				<input type="hidden" name="id" value="<%= request.getAttribute("id") %>" />
 		  			</fieldset>
 		  			<button type="submit" class="btn">Submit</button>
 		  		</form>
@@ -66,8 +72,24 @@
 <script src="http://code.jquery.com/jquery.min.js"></script>
 <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.js"></script>
 <script>
- var lists = [ 'alpha-1,6-mannosyltransferase activity', 'trans-hexaprenyltranstransferase activity', 'single-stranded DNA specific endodeoxyribonuclease activity', 'lactase activity', 'alpha-1,2-mannosyltransferase activity',]; 
-$('#search').typeahead({source: lists})
+$(function() {
+	$("#myTabs").tab(); // initialize tabs
+	$("#myTabs").bind("show", function(e) {
+	var contentID = $(e.target).attr("data-target");
+	var contentURL = $(e.target).attr("href");
+
+	if (typeof(contentURL) != 'undefined') {
+	// state: has a url to load from
+	$(contentID).load(contentURL, function(){
+	$("#myTabs").tab(); // reinitialize tabs
+	});
+
+	} else {
+	//state: no url, to show static data
+	$(contentID).tab('show');
+	}
+	});
+	$('#myTabs a:first').tab("show"); // Load and display content for first tab
 </script>
 </body>
 </html>
