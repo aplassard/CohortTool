@@ -1,5 +1,7 @@
 package org.bmi.cchmc.cohorttool.mutation;
 
+import com.mongodb.BasicDBObject;
+
 public class SimplePatientMutation {
 
 	public String id;
@@ -14,5 +16,17 @@ public class SimplePatientMutation {
 	
 	public String toString(){
 		return "id: "+this.id + ", alt: "+this.alt+", homozygous: "+this.homozygous;
+	}
+	
+	public BasicDBObject getBSON(){
+		BasicDBObject obj = new BasicDBObject();
+		obj.put("id", this.id);
+		obj.put("alt",this.alt);
+		obj.put("homozygous", this.homozygous);
+		return obj;
+	}
+	
+	public SimplePatientMutation(BasicDBObject o){
+		this(o.getString("id"),o.getString("alt"),o.getBoolean("homozygous"));
 	}
 }

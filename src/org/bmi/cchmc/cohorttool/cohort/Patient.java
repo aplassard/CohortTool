@@ -46,10 +46,14 @@ public class Patient {
 	public void setMutationCount(int n){
 		this.mutationCount=n;
 	}
+	
+	public int getMutationCount(){ return this.mutationCount; };
 
 	public String toString(){
 		return this.getBSON().toString();
 	}
+	
+	public boolean isAfflicted(){ return this.afflicted; }
 	
 	public BasicDBObject getBSON(){
 		BasicDBObject obj = new BasicDBObject();
@@ -57,7 +61,7 @@ public class Patient {
 		obj.put("gender", this.gender);
 		obj.put("family",this.family);
 		if(this.mother!=null) obj.put("mother", this.mother);
-		if(this.family!=null) obj.put("father", this.family);
+		if(this.family!=null) obj.put("father", this.father);
 		if(this.mutationCount >0) obj.put("mutationcount", this.mutationCount);
 		obj.put("afflicted",this.afflicted);
 		return obj;

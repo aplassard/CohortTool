@@ -22,9 +22,4 @@ public class SimpleMutation extends Mutation {
 		return chr+"."+location+reference;
 	}
 
-	public SimpleMutation(PatientMutation PM){
-		this.reference=PM.getReference();
-		this.chr=PM.getChr();
-		this.location=PM.getLocation();
-	}
 }

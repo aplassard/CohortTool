@@ -18,6 +18,22 @@ public class Cohort {
 	private HashMap<String,Patient>  patients;
 	private HashMap<SimpleMutation,AnnotatedMutation> mutations;
 	private String name;
+	@SuppressWarnings("unused")
+	private boolean setMutationCount=false;
+	
+	public void getMutationCounts(){
+		HashMap<String,Integer> p = new HashMap<String,Integer>(this.patients.size());
+		for(String S: this.patients.keySet()) p.put(S, 0);
+		for(AnnotatedMutation AM: this.mutations.values()){
+			for(SimplePatientMutation SPM: AM.getSimplePatientMutations()) p.put(SPM.id, p.get(SPM.id)+1);
+		}
+		for(String S: this.patients.keySet()){
+			Patient P = patients.get(S);
+			P.setMutationCount(p.get(S));
+			this.patients.put(S, P);
+		}
+		this.setMutationCount=true;
+	}
 	
 	public Cohort(String name) {
 		this.patients = new HashMap<String,Patient>();
@@ -81,10 +97,14 @@ public class Cohort {
 	        DBCollection coll = db.getCollection("projectmutations");
 	        BasicDBObject obj;
 	        DBCursor cursor = coll.find(this.getQuery());
+	        int n = 0;
 	        while(cursor.hasNext()){
+	        	n++;
 	        	obj = (BasicDBObject) cursor.next();
-	        	System.out.println();
+	        	AnnotatedMutation AM = new AnnotatedMutation(obj);
+	        	this.mutations.put(AM.getSimpleMutation(), AM);
 	        }
+	        System.out.println(n + " mutations found in database");
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -147,16 +167,68 @@ public class Cohort {
 		
 	}
 	
-	public static void main(String[] args) throws UnknownHostException{
-		Cohort C = new Cohort("/Users/andrewplassard/Documents/workspace/CohortTool/example_files/EE-exome-ped.csv","test");
-		System.out.println(C.toString());
- 		C.loadMutationsIntoDatabase();
-		MongoClient MC = new MongoClient("localhost",27017);
-		DB db = MC.getDB("CohortTool");
-        DBCollection coll = db.getCollection("mutations");
-        BasicDBObject obj = (BasicDBObject) coll.findOne(C.getQuery()); 
-        Cohort C2 = new Cohort("/Users/andrewplassard/Documents/workspace/CohortTool/example_files/EE-exome-ped.csv","test");
-        C2.loadMutationsFromDatabase();
+	public void printMutations(){
+		for(AnnotatedMutation AM: this.mutations.values()){
+			System.out.println(AM.toString());
+		}
 	}
-
+	
+	public String getHTMLTable(){
+		String o = "";
+		o += "<div>";
+		o += "<table class=\"table table-striped table table-hover\">\n";
+		o += "\t<caption><h3>Patient Information</h3><caption>\n";
+		o += "\t<thead>\n";
+		o += "\t\t<tr>";
+		o += "\t\t\t<th>ID</th>";
+		o += "\t\t\t<th># of mutations</th>";
+		o += "\t\t\t<th>Father</th>";
+		o += "\t\t\t<th>Mother</th>";
+		o += "\t\t\t<th>Affliction Status</th>";
+		o += "\t\t\t<th>Gender</th>";
+		o += "\t\t</tr>";
+		o += "\t</thead>\n";
+		o += "\t<tbody>\n";
+		Patient I;
+		Object[] n =  this.patients.keySet().toArray();
+		Arrays.sort(n);
+		for(Object K: n){
+			I=this.patients.get(K);
+			if(I.getMutationCount()>0){
+				o += "\t\t<tr>";
+				o += "\t\t<td>";
+				o += I.getID();
+				o += "\t\t</td>\n";
+				o += "\t\t<td>";
+				o += I.getMutationCount();
+				o += "\t\t</td>\n";
+				o += "\t\t<td>";
+				try{
+					o += I.getFather()==null ? "." : I.getFather();
+				}catch(Exception e){
+					o += ".";
+				}
+				o += "\t\t</td>\n";
+				o += "\t\t<td>";
+				try{
+					o += I.getMother()==null ? "." : I.getMother();
+				}catch(Exception e){
+					o += ".";
+				}
+				o += "\t\t</td>\n";
+				o += "\t\t<td>";
+				if(I.isAfflicted()) o+="Afflicted";
+				else o += "Not Afflicted";
+				o += "\t\t</td>\n";
+				o += "\t\t<td>";
+				o += I.getGender();
+				o += "\t\t</td>\n";
+				o += "\t\t<td>";
+			}
+		}
+		o += "\t</tbody>";
+		o += "</table>";
+		o += "</div>";
+		return o;
+	}
 }

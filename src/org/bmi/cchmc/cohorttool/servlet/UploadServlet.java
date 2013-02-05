@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import org.bmi.cchmc.cohorttool.cohort.Cohort;
-import org.bmi.cchmc.cohorttool.patient.PatientSet;
 
 import com.mongodb.*;
 

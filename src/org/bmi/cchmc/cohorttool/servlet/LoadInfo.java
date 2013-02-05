@@ -2,8 +2,6 @@ package org.bmi.cchmc.cohorttool.servlet;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.bmi.cchmc.cohorttool.cohort.Cohort;
-import org.bmi.cchmc.cohorttool.util.ServletUtilities;
 
 import com.mongodb.*;
 
@@ -51,21 +48,9 @@ public class LoadInfo extends HttpServlet {
         System.out.println(C.toString());
         C.loadMutationsFromFile(new FileReader(this.getServletContext().getRealPath("SNPomics/output/"+name+".txt")));
         C.loadMutationsIntoDatabase();
-        Cohort C1 = new Cohort(p);
-        C1.loadMutationsFromDatabase();
-        /*
-        BasicDBObject patients = (BasicDBObject) ((BasicDBObject) p.get("Patient Info")).get("Patients");
-        Set<String> patientIds = patients.keySet();
-        System.out.println("Patients: ");
-        for(String K: patientIds) System.out.println(K + ": "+patients.get(K));
-		Cohort C = new Cohort(p);
-		System.out.println("Loading Mutations from file "+this.getServletContext().getRealPath("SNPomics/output/"+name+".txt"));
-		C.getMutations(this.getServletContext().getRealPath("SNPomics/output/"+name+".txt"));
-		C.loadMutationsIntoDatabase();
-		C.loadPatientMutationsIntoDatabase();
+        C.getMutationCounts();
 		request.setAttribute("patientset", C.getHTMLTable());
 		request.getRequestDispatcher("/StartAnalysis.jsp").forward(request,response);
-		*/
 	}
 
 }
