@@ -48,9 +48,10 @@ public class Analyze extends HttpServlet {
 		DB db = MC.getDB("CohortTool");
 		DBCollection coll = db.getCollection("projects");
 		BasicDBObject o = (BasicDBObject) coll.findOne(new BasicDBObject("name", request.getParameterValues("id")[0]));
-		Analysis A = new Analysis(o);
+		Analysis A = new Analysis(o, request.getParameterValues("name")[0]);
 		A.loadMutationsFromDatabase();
 		if(request.getParameterMap().containsKey("homozygous")) A.removeHomozygous();
+		A.loadIntoDatabase();
 		out.close();
 	}
 

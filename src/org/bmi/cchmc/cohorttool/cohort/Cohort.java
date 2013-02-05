@@ -15,6 +15,7 @@ import com.mongodb.MongoClient;
 
 public class Cohort {
 
+	private String htmlTable;
 	private HashMap<String,Patient>  patients;
 	protected HashMap<SimpleMutation,AnnotatedMutation> mutations;
 	private String name;
@@ -87,6 +88,7 @@ public class Cohort {
 		BasicDBObject p = new BasicDBObject();
 		for(Patient P : this.patients.values()) p.put(P.getID(), P.getBSON());
 		obj.put("patients", p);
+		if(htmlTable!=null) obj.put("htmlTable", this.htmlTable);
 		return obj;
 	}
 	
@@ -229,6 +231,7 @@ public class Cohort {
 		o += "\t</tbody>";
 		o += "</table>";
 		o += "</div>";
+		this.htmlTable=o;
 		return o;
 	}
 }
