@@ -16,7 +16,7 @@ import com.mongodb.MongoClient;
 public class Cohort {
 
 	private HashMap<String,Patient>  patients;
-	private HashMap<SimpleMutation,AnnotatedMutation> mutations;
+	protected HashMap<SimpleMutation,AnnotatedMutation> mutations;
 	private String name;
 	@SuppressWarnings("unused")
 	private boolean setMutationCount=false;

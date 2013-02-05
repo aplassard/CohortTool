@@ -50,6 +50,7 @@ public class LoadInfo extends HttpServlet {
         C.loadMutationsIntoDatabase();
         C.getMutationCounts();
 		request.setAttribute("patientset", C.getHTMLTable());
+		request.setAttribute("name", name);
 		request.getRequestDispatcher("/StartAnalysis.jsp").forward(request,response);
 	}
 

@@ -93,4 +93,16 @@ public class AnnotatedMutation extends Mutation {
 			this.patients.add(new SimplePatientMutation((BasicDBObject) obj));
 		}
 	}
+
+	public void removeHomozygous() {
+		ArrayList<SimplePatientMutation> toRemove = new ArrayList<SimplePatientMutation>();
+		for(SimplePatientMutation SPM: this.patients){
+			if(SPM.homozygous) toRemove.add(SPM);
+		}
+		for(SimplePatientMutation SPM: toRemove) this.patients.remove(SPM);
+	}
+	
+	public int getPatientCount(){
+		return this.patients.size();
+	}
 }

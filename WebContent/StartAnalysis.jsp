@@ -42,9 +42,22 @@
 		<div class="tab-content">
 		  <div class="tab-pane active" id="patients"><%=request.getAttribute("patientset") %></div>
 		  <div class="tab-pane" id="new">New Analysis</div><br>
-		  	<div class="well">
-		  		<input type="text" class="span3" id="search" data-provide="typeahead" data-items="100" />
-		  	</div>
+		  		<form action="/CohortTool/Analysis/" method="post">
+		  			<fieldset>
+		  				<input type="text" placeholder="Name of Analysis" class="span3" name="name" />
+		  				<label class="checkbox">
+		  					<input type="checkbox" name="heterozygous" /> Remove Heterozygous Mutations<br>
+		  				</label>
+		  				<label class="checkbox">
+		  					<input type="checkbox" name="homozygous"/> Remove Homozygous Mutations
+		  				</label>
+		  				<label class="checkbox">
+		  					<input type="checkbox" name="rsID"/> Remove Mutations in dbSNP
+		  				</label>
+		  				<input type="hidden" name="id" value="<%= request.getAttribute("name") %>" />
+		  			</fieldset>
+		  			<button type="submit" class="btn">Submit</button>
+		  		</form>
 		</div>
 	</div>
 </div>
