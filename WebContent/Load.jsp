@@ -39,7 +39,7 @@
 		  <li class="dropdown">
 		  	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Available Analyses<b class="caret"></b></a>
 		  	<ul class="dropdown-menu">
-				<%= ServletUtilities.getAnalysisTabs((String) request.getAttribute("id")) %>
+				<%= ServletUtilities.getAnalysisTabs((String) request.getParameter("id")) %>
 		  	</ul>
 		  </li>
 		  <li><a href="#long" data-toggle="tab">Long Term Link</a></li>
@@ -47,7 +47,7 @@
 
 		<div class="tab-content">
 		  <div class="tab-pane active" id="patients">
-		  	<%=request.getAttribute("patientset") %>
+		  	<%=request.getParameter("patientset") %>
 		  </div>
 		  <div class="tab-pane" id="new">New Analysis<br>
 		  		<form action="/CohortTool/Analysis/" method="post">
@@ -62,16 +62,16 @@
 		  				<label class="checkbox">
 		  					<input type="checkbox" name="rsID"/> Remove Mutations in dbSNP
 		  				</label>
-		  				<input type="hidden" name="id" value="<%= request.getAttribute("id") %>" />
+		  				<input type="hidden" name="id" value="<%= request.getParameter("id") %>" />
 		  			</fieldset>
 		  			<button type="submit" class="btn">Submit</button>
 		  		</form>
 		  	</div>
 		  	<div class="tab-pabe" id="long">
 		  		<h3>Long term link</h3><br>
-		  		<code>localhost:8080/CohortTool/Load.jsp?id=<%=request.getAttribute("id") %></code>
+		  		<code>localhost:8080/CohortTool/Load.jsp?id=<%=request.getParameter("id") %></code>
 		  	</div>
-		  	<%=ServletUtilities.getAllAnalysisTables( (String) request.getAttribute("id")) %>
+		  	<%=ServletUtilities.getAllAnalysisTables( (String) request.getParameter("id")) %>
 		</div>
 	</div>
 </div>

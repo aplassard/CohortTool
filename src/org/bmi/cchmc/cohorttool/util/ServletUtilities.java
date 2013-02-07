@@ -3,6 +3,7 @@ package org.bmi.cchmc.cohorttool.util;
 import java.net.UnknownHostException;
 
 import org.bmi.cchmc.cohorttool.analysis.Analysis;
+import org.bmi.cchmc.cohorttool.cohort.Cohort;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -155,7 +156,7 @@ public class ServletUtilities {
 			DBCursor c = coll.find(new BasicDBObject("name",name));
 			while(c.hasNext()){
 				BasicDBObject obj = (BasicDBObject) c.next();
-				o+=	"<div class=\"tab-pane\" id=\""+obj.getString("analysisname").replace(' ','_')+"\"><br>\n";
+				o+=	"<div class=\"tab-pane\" id=\""+obj.getString("analysisname").replace(' ','_')+"\">\n";
 				o+= getAnalysisTable(obj,obj.getString("analysisname"));
 				o+= "</div>";
 			}
@@ -172,5 +173,24 @@ public class ServletUtilities {
 		A.loadMutationsFromAnalysisDatabase();
 		A.getMutationCounts();
 		return A.getHTMLTable(A.getAnalysisName());
+	}
+	
+	public static String getCohortTable(String name){
+		String o = "";
+		try {
+			MongoClient MC = new MongoClient("localhost",27017);
+			DB db = MC.getDB("CohortTool");
+			DBCollection coll = db.getCollection("projects");
+			System.out.println(name);
+			Cohort C = new Cohort( (BasicDBObject) coll.findOne(new BasicDBObject("name",name)));
+			MC.close();
+			C.loadMutationsFromDatabase();
+			C.getMutationCounts();
+			return C.getHTMLTable(C.getName());
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return o;
 	}
 }
