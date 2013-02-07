@@ -10,11 +10,14 @@ import org.bmi.cchmc.cohorttool.mutation.SimpleMutation;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 
 public class Analysis extends Cohort {
 
 	private String analysisName;
+	
+	public String getAnalysisName(){ return this.analysisName; }
 	
 	public void removeDBSNP(){
 		ArrayList<SimpleMutation> toRemove = new ArrayList<SimpleMutation>();
@@ -81,13 +84,31 @@ public class Analysis extends Cohort {
 	}
 	
 	public BasicDBObject getAnalysisQuery(){
-		return new BasicDBObject("analysisname",this.analysisName);
+		BasicDBObject obj =  this.getQuery();
+		obj.put("analysisname", this.analysisName);
+		return obj;
 	}
 	
 	public BasicDBObject getAnalysisBSON(){
 		BasicDBObject obj = this.getBSON();
 		obj.put("analysisname", this.analysisName);
 		return obj;
+	}
+
+	public void loadMutationsFromAnalysisDatabase() {
+		try {
+			MongoClient MC = new MongoClient("localhost",27017);
+			DB db = MC.getDB("CohortTool");
+			DBCollection coll = db.getCollection("analysismutations");
+			DBCursor cursor = coll.find(this.getAnalysisQuery());
+			while(cursor.hasNext()){
+				BasicDBObject obj = (BasicDBObject) cursor.next();
+				AnnotatedMutation AM = new AnnotatedMutation( obj);
+				this.mutations.put(AM.getSimpleMutation(), AM);
+			}
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

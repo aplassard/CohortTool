@@ -49,7 +49,8 @@ public class LoadInfo extends HttpServlet {
         C.loadMutationsFromFile(new FileReader(this.getServletContext().getRealPath("SNPomics/output/"+name+".txt")));
         C.loadMutationsIntoDatabase();
         C.getMutationCounts();
-		request.setAttribute("patientset", C.getHTMLTable());
+        mongoClient.close();
+		request.setAttribute("patientset", C.getHTMLTable(C.getName()));
 		request.setAttribute("name", name);
 		request.getRequestDispatcher("/StartAnalysis.jsp").forward(request,response);
 	}

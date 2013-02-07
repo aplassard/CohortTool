@@ -2,6 +2,8 @@ package org.bmi.cchmc.cohorttool.util;
 
 import java.net.UnknownHostException;
 
+import org.bmi.cchmc.cohorttool.analysis.Analysis;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -94,6 +96,7 @@ public class ServletUtilities {
 				o+="', ";
 			}
 			o+=" ]";
+			MC.close();
 			return o;
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -104,7 +107,7 @@ public class ServletUtilities {
 	}
 	
 	public static void main(String[] args){
-		getAvailableAnalyses("test-1360091727153");
+		getAvailableAnalyses("test-1360181154202");
 	}
 
 	public static void getAvailableAnalyses(String name){
@@ -118,6 +121,7 @@ public class ServletUtilities {
 				BasicDBObject o = (BasicDBObject) c.next();
 				System.out.println(o.get("name")+", analysis: "+o.getString("analysisname"));
 			}
+			MC.close();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
@@ -132,12 +136,41 @@ public class ServletUtilities {
 			DBCursor c = coll.find(new BasicDBObject("name",name));
 			while(c.hasNext()){
 				BasicDBObject b = (BasicDBObject) c.next();
-				o+="<li><a href=\"#"+b.get("analysisname")+"\" data-toggle=\"tab\">"+b.get("analysisname") + "</a></li>\n";
+				System.out.println(b.toString());
+				o+="<li><a href=\"#"+b.getString("analysisname").replace(' ','_')+"\" data-toggle=\"tab\">"+b.getString("analysisname") + "</a></li>\n";
 			}
+			MC.close();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		return o;
+	}
+	
+	public static String getAllAnalysisTables(String name){
+		String o = "";
+		try {
+			MongoClient MC = new MongoClient("localhost",27017);
+			DB db = MC.getDB("CohortTool");
+			DBCollection coll = db.getCollection("analysis");
+			DBCursor c = coll.find(new BasicDBObject("name",name));
+			while(c.hasNext()){
+				BasicDBObject obj = (BasicDBObject) c.next();
+				o+=	"<div class=\"tab-pane\" id=\""+obj.getString("analysisname").replace(' ','_')+"\"><br>\n";
+				o+= getAnalysisTable(obj,obj.getString("analysisname"));
+				o+= "</div>";
+			}
+			MC.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return o;
+	}
+	
+	public static String getAnalysisTable(BasicDBObject o ,String name){
+		Analysis A = new Analysis(o,name);
+		A.loadMutationsFromAnalysisDatabase();
+		A.getMutationCounts();
+		return A.getHTMLTable(A.getAnalysisName());
 	}
 }

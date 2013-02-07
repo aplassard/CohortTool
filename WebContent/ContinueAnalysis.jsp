@@ -66,6 +66,7 @@
 		  			<button type="submit" class="btn">Submit</button>
 		  		</form>
 		  	</div>
+		  	<%=ServletUtilities.getAllAnalysisTables( (String) request.getAttribute("id")) %>
 		</div>
 	</div>
 </div>

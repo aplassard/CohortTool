@@ -22,6 +22,8 @@ public class Cohort {
 	@SuppressWarnings("unused")
 	private boolean setMutationCount=false;
 	
+	public String getName(){ return this.name; }
+	
 	public void getMutationCounts(){
 		HashMap<String,Integer> p = new HashMap<String,Integer>(this.patients.size());
 		for(String S: this.patients.keySet()) p.put(S, 0);
@@ -106,6 +108,7 @@ public class Cohort {
 	        	AnnotatedMutation AM = new AnnotatedMutation(obj);
 	        	this.mutations.put(AM.getSimpleMutation(), AM);
 	        }
+	        MC.close();
 	        System.out.println(n + " mutations found in database");
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -162,6 +165,7 @@ public class Cohort {
 	        	obj.put("name", this.name);
 	        	coll.insert(obj);
 	        }
+	        MC.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -175,11 +179,11 @@ public class Cohort {
 		}
 	}
 	
-	public String getHTMLTable(){
+	public String getHTMLTable(String title){
 		String o = "";
 		o += "<div>";
 		o += "<table class=\"table table-striped table table-hover\">\n";
-		o += "\t<caption><h3>Patient Information</h3><caption>\n";
+		o += "\t<caption><h3>"+title+"</h3><caption>\n";
 		o += "\t<thead>\n";
 		o += "\t\t<tr>";
 		o += "\t\t\t<th>ID</th>";

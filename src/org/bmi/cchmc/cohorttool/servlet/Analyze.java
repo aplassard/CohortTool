@@ -55,7 +55,9 @@ public class Analyze extends HttpServlet {
 		if(request.getParameterMap().containsKey("heterozygous")) A.removeHeterozygous();
 		if(request.getParameterMap().containsKey("rsID")) A.removeDBSNP();
 		A.loadIntoDatabase();
-		request.setAttribute("patientset", C.getHTMLTable());
+		A.loadMutationsIntoDataBase();
+		MC.close();
+		request.setAttribute("patientset", C.getHTMLTable(C.getName()));
 		request.setAttribute("id", request.getParameterValues("id")[0]);
 		request.getRequestDispatcher("/ContinueAnalysis.jsp").forward(request,response);
 	}
