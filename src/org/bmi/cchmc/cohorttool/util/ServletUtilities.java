@@ -1,6 +1,19 @@
 package org.bmi.cchmc.cohorttool.util;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.net.URL;
 
 import org.bmi.cchmc.cohorttool.analysis.Analysis;
 import org.bmi.cchmc.cohorttool.cohort.Cohort;
@@ -108,7 +121,38 @@ public class ServletUtilities {
 	}
 	
 	public static void main(String[] args){
-		getAvailableAnalyses("test-1360181154202");
+		String charset = "UTF-8";
+		String form = "single";
+		String separator = ",";
+		String symbolType="entrez";
+		String genelist = "1584,adrenal\n";
+		String request = "http://toppcluster.cchmc.org/CheckGenes";
+		String query;
+		try {
+			System.out.println("Started");
+			query = String.format("form=%s&separator=%s&symbolType=%s&genelist=%s", 
+					URLEncoder.encode(form, charset),
+					URLEncoder.encode(separator, charset),
+					URLEncoder.encode(symbolType, charset),
+					URLEncoder.encode(genelist, charset)
+					);
+			URLConnection connection = new URL(request).openConnection();
+			connection.setDoOutput(true); // Triggers POST.
+			connection.setRequestProperty("Accept-Charset", charset);
+			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + charset);
+			OutputStream output = null;
+			try {
+			     output = connection.getOutputStream();
+			     output.write(query.getBytes(charset));
+			} finally {
+			     if (output != null) try { output.close(); } catch (IOException logOrIgnore) {}
+			}
+			InputStream response = connection.getInputStream();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void getAvailableAnalyses(String name){

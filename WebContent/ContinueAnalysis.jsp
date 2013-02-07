@@ -67,9 +67,9 @@
 		  			<button type="submit" class="btn">Submit</button>
 		  		</form>
 		  	</div>
-		  	<div class="tab-pabe" id="long">
+		  	<div class="tab-pane" id="long">
 		  		<h3>Long term link</h3><br>
-		  		<code>localhost:8080/CohortTool/Load.jsp?id=<%=request.getAttribute("id") %></code>
+		  		<a href="<%=request.getServerName().toString()%>:<%=request.getServerPort() %>/CohortTool/Load.jsp?id=<%=request.getParameter("id") %>"><%=request.getServerName().toString()%>:<%=request.getServerPort() %>/CohortTool/Load.jsp?id=<%=request.getParameter("id") %></a>
 		  	</div>
 		  	<%=ServletUtilities.getAllAnalysisTables( (String) request.getAttribute("id")) %>
 		</div>
