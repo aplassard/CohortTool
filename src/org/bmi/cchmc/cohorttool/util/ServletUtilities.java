@@ -232,4 +232,26 @@ public class ServletUtilities {
 		}
 		return o;
 	}
+	
+	public static String getExportList(String name){
+		String o = "";
+		try {
+			MongoClient MC = new MongoClient("localhost",27017);
+			DB db = MC.getDB("CohortTool");
+			DBCollection coll = db.getCollection("analysis");
+			System.out.println(name);
+			DBCursor c = coll.find(new BasicDBObject("name",name));
+			while(c.hasNext()){
+				BasicDBObject obj = (BasicDBObject) c.next();
+				o+="<label class=\"radio\">\n";
+				o+="<input type=\"radio\" value=\""+obj.get("analysisname")+"\" name=\"exportitems\">"+obj.get("analysisname")+"</input><br>\n";
+				o+="</label>";
+			}
+			MC.close();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return o;
+	}
 }

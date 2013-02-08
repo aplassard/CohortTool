@@ -43,6 +43,7 @@
 		  	</ul>
 		  </li>
 		  <li><a href="#long" data-toggle="tab">Long Term Link</a></li>
+		  <li><a href="#export" data-toggle="tab">Export</a></li>
 		</ul>
 
 		<div class="tab-content">
@@ -72,6 +73,23 @@
 		  		<a href="<%=request.getServerName().toString()%>:<%=request.getServerPort() %>/CohortTool/Load.jsp?id=<%=request.getParameter("id") %>"><%=request.getServerName().toString()%>:<%=request.getServerPort() %>/CohortTool/Load.jsp?id=<%=request.getParameter("id") %></a>
 		  	</div>
 		  	<%=ServletUtilities.getAllAnalysisTables( (String) request.getAttribute("id")) %>
+		  	<div class="tab-pane" id="export">
+		  		<form action="/CohortTool/Export" method="get">
+		  			<fieldset>
+		  				<h2>Select Lists to Export</h2><br>
+		  				<%=ServletUtilities.getExportList( (String) request.getAttribute("id")) %>
+		  				Sets to Export: 
+		  				<label class="radio inline">
+		  					<input type="radio" class="inline" name="setsToExport" value="all" checked />All
+		  				</label>
+		  				<label class="radio inline">
+		  					<input type="radio" class="inline" name="setsToExport" value="afflicted" />Afflicted
+		  				</label>
+		  				<input type="hidden" name="name" value="<%=request.getAttribute("id") %>" /><br>
+		  				<input type="submit" />
+		  			</fieldset>
+		  		</form>
+		  	</div>
 		</div>
 	</div>
 </div>
