@@ -244,7 +244,7 @@ public class ServletUtilities {
 			while(c.hasNext()){
 				BasicDBObject obj = (BasicDBObject) c.next();
 				o+="<label class=\"radio\">\n";
-				o+="<input type=\"radio\" value=\""+obj.get("analysisname")+"\" name=\"exportitems\">"+obj.get("analysisname")+"</input><br>\n";
+				o+="<input type=\"radio\" value=\""+obj.get("analysisname")+"\" name=\"analysisname\">"+obj.get("analysisname")+"</input><br>\n";
 				o+="</label>";
 			}
 			MC.close();

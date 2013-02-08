@@ -117,4 +117,36 @@ public class AnnotatedMutation extends Mutation {
 	public boolean inDBSNP(){
 		return this.rsID!=null;
 	}
+
+	public String toSimpleString() {
+		return this.chr+this.location+this.reference+"->"+this.alternate.toString();
+	}
+
+	public String getCDNAString(){
+		String o="";
+		for(String s: this.CDNA){
+			o+=s+",";
+		}
+		return o;
+	}
+	
+	public String getGeneString(){
+		String o="";
+		for(String s: this.genes){
+			o+=s+",";
+		}
+		return o;
+	}
+	
+	public String getProteinString(){
+		String o="";
+		for(String s: this.protein){
+			o+=s+",";
+		}
+		return o;
+	}
+	
+	public String getRsID(){
+		return this.rsID==null ? "null":this.rsID;
+	}
 }

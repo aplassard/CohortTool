@@ -1,11 +1,16 @@
 package org.bmi.cchmc.cohorttool.analysis;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.bmi.cchmc.cohorttool.cohort.Cohort;
 import org.bmi.cchmc.cohorttool.mutation.AnnotatedMutation;
 import org.bmi.cchmc.cohorttool.mutation.SimpleMutation;
+import org.bmi.cchmc.cohorttool.mutation.SimplePatientMutation;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -111,4 +116,64 @@ public class Analysis extends Cohort {
 		}
 	}
 
+
+	public void exportMutations(boolean all, String filename){
+		HashMap<String,Integer> toExport = new HashMap<String, Integer>();
+		int n = 0;
+		if(all){
+			for(String p: this.patients.keySet()){
+				toExport.put(p, n++);
+			}
+		}
+		else{
+			for( String p:this.patients.keySet()){
+				if( this.patients.get(p).isAfflicted()) toExport.put(p, n++);
+			}
+		}
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(filename));
+			String[] names = new String[n];
+			out.write("Mutations");
+			out.write("\tCDNA");
+			out.write("\tProtein");
+			out.write("\tGene");
+			out.write("\trsID");
+			for(String S: toExport.keySet()) names[toExport.get(S)]=S;
+			for(String S: names) out.write("\t"+S);
+			out.write("\n");
+			for(SimpleMutation SM: this.mutations.keySet()){
+				AnnotatedMutation AM = this.mutations.get(SM);
+				String[] loc = new String[n];
+				for(int i = 0; i < n; i++) loc[i]="0";
+				for(SimplePatientMutation SPM: AM.getSimplePatientMutations()){
+					if(toExport.containsKey(SPM.id)) loc[toExport.get(SPM.id)]= SPM.homozygous ? "2" : "1";
+				}
+				boolean good=false;
+				for(String S: loc){
+					if(!S.equals("0")){
+						good=true;
+						break;
+					}
+				}
+				if(good){
+					out.write(AM.toSimpleString());
+					out.write("\t");
+					out.write(AM.getCDNAString());
+					out.write("\t");
+					out.write(AM.getProteinString());
+					out.write("\t");
+					out.write(AM.getGeneString());
+					out.write("\t");
+					out.write(AM.getRsID());
+					for(String S: loc) out.write("\t"+S);
+					out.write("\n");
+				}
+			}
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 }
