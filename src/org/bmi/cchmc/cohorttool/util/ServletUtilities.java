@@ -13,6 +13,7 @@ import java.net.URL;
 import org.bmi.cchmc.cohorttool.analysis.Analysis;
 import org.bmi.cchmc.cohorttool.cohort.Cohort;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -250,6 +251,85 @@ public class ServletUtilities {
 			MC.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return o;
+	}
+	
+	public static String getTabContent(String name){
+		String o ="";
+		try {
+			MongoClient MC = new MongoClient("localhost",27017);
+			DB db = MC.getDB("CohortTool");
+			DBCollection coll = db.getCollection("htmltables");
+			System.out.println(name);
+			BasicDBObject obj = (BasicDBObject) coll.findOne(new BasicDBObject("name",name));
+			o+="<ul class=\"nav nav-pills\">\n";
+			o+="<li class=\"active\"><a href=\"#patients\" data-toggle=\"tab\">Patient Info</a></li>\n";
+			o+="<li><a href=\"#new\" data-toggle=\"tab\">Add New Analysis</a></li>\n";
+			o+="<li><a href=\"#long\" data-toggle=\"tab\">Long Term Link</a></li>\n";
+			if(obj.containsField("analysis")){
+				o+="<li class=\"dropdown\">\n";
+				o+="<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Available Analyses<b class=\"caret\"></b></a>";
+				o+="<ul class=\"dropdown-menu\">";
+				BasicDBList a = (BasicDBList) obj.get("analysis");
+				for(int i = 0; i < a.size(); i++){
+					BasicDBObject t = (BasicDBObject) a.get(i);
+					o+="<li><a href=\"#";
+					o+=t.get("id");
+					o+="\"data-toggle=\"tab\">";
+					o+=t.get("name");
+					o+="</a></li>\n";
+				}
+				o+="</ul></li>\n";
+				o+="<li><a href=\"#export\" data-toggle=\"tab\">Export</a></li>\n";
+			}
+			o+="</ul>";
+			o+="<div class=\"tab-content\">\n";
+			o+="<div class=\"tab-pane active\" id=\"patients\">\n<br>\n";
+			o+=obj.getString("patientinfo");
+			o+="</div>\n";
+			o+="<div class=\"tab-pane\" id=\"new\">\n";
+			o+="New Analysis<br>\n<form action=\"/CohortTool/Analysis/\" method=\"post\">\n<fieldset>\n<input type=\"text\" placeholder=\"Name of Analysis\" class=\"span3\" name=\"analysisname\"/>\n<label class=\"checkbox\">\n";
+			o+="<input type=\"checkbox\" name=\"heterozygous\"/> Remove Heterozygous Mutations<br>\n</label>\n<label class=\"checkbox\">\n<input type=\"checkbox\" name=\"homozygous\"/> Remove Homozygous Mutations </label>\n";
+			o+="<label class=\"checkbox\">\n<input type=\"checkbox\" name=\"rsID\"/> Remove Mutations in dbSNP </label>\n<label class=\"checkbox\">\n";
+			o+="<input type=\"checkbox\" name=\"complemented\"/> Get Complemented Mutations </label>\n<input type=\"hidden\" name=\"name\" value=\""+name+"\"/>\n";
+			o+="</fieldset>\n<button type=\"submit\" class=\"btn\">Submit</button>\n</form>\n</div>\n";
+			if(obj.containsField("analysis")){
+				BasicDBList a = (BasicDBList) obj.get("analysis");
+				for(int i = 0; i < a.size(); i++){
+					BasicDBObject t = (BasicDBObject) a.get(i);
+					o+="<div class=\"tab-pane\" id=\"";
+					o+=t.getString("id");
+					o+="\">\n<br>\n";
+					o+=t.getString("table");
+					o+="</div>\n";
+				}
+				o+="<div class=\"tab-pane\" id=\"export\">\n";
+				o+="<h3>Export</h3><br>\n";
+				o+="<form action=\"/CohortTool/Export\" method=\"get\">\n";
+	  			o+="<fieldset>\n";
+  				o+="<h3>Select Lists to Export</h3><br>\n";
+  				for(int i = 0; i < a.size(); i++){
+					BasicDBObject t = (BasicDBObject) a.get(i);
+					o+="<label class=\"radio\">\n";
+					o+="<input type=\"radio\" value=\""+t.get("name")+"\" name=\"analysisname\">"+t.get("name")+"</input><br>\n";
+					o+="</label>\n";
+				}
+  				o+="<label class=\"radio inline\">\n";
+  				o+="<input type=\"radio\" class=\"inline\" name=\"setsToExport\" value=\"all\" checked />All\n";
+  				o+="</label>\n";
+  				o+="<label class=\"radio inline\">\n";
+  				o+="<input type=\"radio\" class=\"inline\" name=\"setsToExport\" value=\"afflicted\" checked />Afflicted\n";
+  				o+="</label>\n";
+  				o+="<input type=\"hidden\" name=\"name\" value="+name+" /><br>\n";
+  				o+="<input type=\"submit\" />\n";
+  				o+="</fieldset>\n";
+  				o+="</form>\n";
+  				o+="</div>\n";
+			}
+			MC.close();
+		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
 		return o;

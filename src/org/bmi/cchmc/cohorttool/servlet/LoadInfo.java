@@ -49,10 +49,15 @@ public class LoadInfo extends HttpServlet {
         C.loadMutationsFromFile(new FileReader(this.getServletContext().getRealPath("SNPomics/output/"+name+".txt")));
         C.loadMutationsIntoDatabase();
         C.getMutationCounts();
-        mongoClient.close();
 		request.setAttribute("patientset", C.getHTMLTable(C.getName()));
 		request.setAttribute("name", name);
-		request.getRequestDispatcher("/StartAnalysis.jsp").forward(request,response);
+		DBCollection htmltables = db.getCollection("htmltables");
+		p = new BasicDBObject();
+		p.put("name", C.getName());
+		p.put("patientinfo",C.getHTMLTable(C.getName().split("-")[0].replace('_', ' ')));
+		htmltables.insert(p);
+		mongoClient.close();
+		request.getRequestDispatcher("/Analysis.jsp").forward(request,response);
 	}
 
 }

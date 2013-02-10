@@ -176,37 +176,30 @@ public class Analysis extends Cohort {
 	}
 
 	public void leaveComplemented(){
-		HashMap<String,HashMap<String,Integer>> patientgenes = new HashMap<String,HashMap<String,Integer>>(); // Patient Id, Gene, Count
-		System.out.println("Finding Complemented Mutations");
+		HashMap<String,HashMap<String,Integer>> GPC = new HashMap<String,HashMap<String,Integer>>(); // Gene, Patient, Count
+		System.out.println("Getting Counts of Mutations in each gene");
 		for(AnnotatedMutation AM: this.mutations.values()){
-			for(SimplePatientMutation SPM: AM.getSimplePatientMutations()){
-				HashMap<String,Integer> t;
-				int n=0;
-				if(patientgenes.containsKey(SPM.id)){
-					t = patientgenes.get(SPM.id);
+			HashMap<String,Integer> PC;
+			if(!AM.getGenes()[0].equals("")){
+				if(!GPC.containsKey(AM.getGenes()[0])){
+					PC = new HashMap<String,Integer>();
+				}else {
+					PC = GPC.get(AM.getGenes()[0]);
 				}
-				else{
-					t = new HashMap<String,Integer>();
+				for(SimplePatientMutation SPM: AM.getSimplePatientMutations()){
+					if(PC.containsKey(SPM.id))PC.put(SPM.id, PC.get(SPM.id)+1);
+					else PC.put(SPM.id,1);
 				}
-				String[] genes = AM.getGenes();
-				if(genes.length>0){
-					if(t.containsKey(genes[0])){
-						n=t.get(genes[0])+1;
-						
-					}
-					else n=1;
-					t.put(genes[0],n);
-					patientgenes.put(SPM.id, t);
-				}
+				GPC.put(AM.getGenes()[0], PC);
 			}
 		}
-		System.out.println("Removing Non-Complemented Mutations");
-		HashMap<SimpleMutation,AnnotatedMutation> newmut = new HashMap<SimpleMutation,AnnotatedMutation>();
-		for(SimpleMutation SM: this.mutations.keySet()){
-			AnnotatedMutation AM = this.mutations.get(SM);
-			AM.removeNonComplemented(patientgenes);
-			if(AM.getSimplePatientMutations().size()>0) newmut.put(AM.getSimpleMutation(), AM);
+		HashMap<SimpleMutation,AnnotatedMutation> newmuts = new HashMap<SimpleMutation,AnnotatedMutation>();
+		for(AnnotatedMutation AM: this.mutations.values()){
+			if(!AM.getGenes()[0].equals("")){
+				AM.removeNonComplemented(GPC.get(AM.getGenes()[0]));
+				if(AM.getSimplePatientMutations().size()>0) newmuts.put(AM.getSimpleMutation(), AM);
+			}
 		}
-		this.mutations=newmut;
+		this.mutations=newmuts;
 	}
 }

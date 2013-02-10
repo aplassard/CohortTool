@@ -33,10 +33,10 @@
 <br><br><br>
 <div class="span9 offset1">
 	<div class="tabbable">
-		<%= ServletUtilities.getTabContent((String) request.getParameter("name")) %>
+		<%= ServletUtilities.getTabContent((String) request.getAttribute("name")) %>
 		<div class="tab-pane" id="long">
 		  	<h3>Long term link</h3><br>
-		  	<a href="<%=request.getServerName().toString()%>:<%=request.getServerPort() %>/CohortTool/Load.jsp?id=<%=request.getParameter("name") %>"><%=request.getServerName().toString()%>:<%=request.getServerPort() %>/CohortTool/Load.jsp?id=<%=request.getParameter("name") %></a>
+		  	<a href="<%=request.getServerName().toString()%>:<%=request.getServerPort() %>/CohortTool/Load.jsp?id=<%=request.getAttribute("name") %>"><%=request.getServerName().toString()%>:<%=request.getServerPort() %>/CohortTool/Load.jsp?id=<%=request.getAttribute("name") %></a>
 		</div>
 		</div>
 	</div>

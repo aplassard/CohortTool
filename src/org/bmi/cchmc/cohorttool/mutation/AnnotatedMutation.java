@@ -155,13 +155,10 @@ public class AnnotatedMutation extends Mutation {
 	}
 
 	public void removeNonComplemented(
-			HashMap<String, HashMap<String, Integer>> patientgenes) {
+			HashMap<String, Integer> PC) { // Patient, Count
 		ArrayList<SimplePatientMutation> toRemove = new ArrayList<SimplePatientMutation>();
 		for(SimplePatientMutation SPM: this.patients){
-			if(!patientgenes.get(SPM.id).containsKey(this.genes[0])||
-					patientgenes.get(SPM.id).get(this.genes[0])<2){
-				toRemove.add(SPM);
-			}
+			if(!PC.containsKey(SPM.id)||PC.get(SPM.id)<2) toRemove.add(SPM);
 		}
 		for(SimplePatientMutation SPM: toRemove) this.patients.remove(SPM);
 	}

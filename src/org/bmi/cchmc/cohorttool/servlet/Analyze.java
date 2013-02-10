@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.bmi.cchmc.cohorttool.analysis.*;
-import org.bmi.cchmc.cohorttool.cohort.Cohort;
 
 import com.mongodb.*;
 
@@ -45,22 +44,33 @@ public class Analyze extends HttpServlet {
 		MongoClient MC = new MongoClient("localhost",27017);
 		DB db = MC.getDB("CohortTool");
 		DBCollection coll = db.getCollection("projects");
-		BasicDBObject o = (BasicDBObject) coll.findOne(new BasicDBObject("name", request.getParameterValues("id")[0]));
-		Analysis A = new Analysis(o, request.getParameterValues("name")[0]);
+		BasicDBObject o = (BasicDBObject) coll.findOne(new BasicDBObject("name", request.getParameterValues("name")[0]));
+		Analysis A = new Analysis(o, request.getParameterValues("analysisname")[0]);
 		A.loadMutationsFromDatabase();
-		Cohort C = new Cohort(o);
-		C.loadMutationsFromDatabase();
-		C.getMutationCounts();
 		if(request.getParameterMap().containsKey("homozygous")) A.removeHomozygous();
 		if(request.getParameterMap().containsKey("heterozygous")) A.removeHeterozygous();
 		if(request.getParameterMap().containsKey("rsID")) A.removeDBSNP();
 		if(request.getParameterMap().containsKey("complemented")) A.leaveComplemented();
 		A.loadIntoDatabase();
 		A.loadMutationsIntoDataBase();
+		A.getMutationCounts();
+		coll = db.getCollection("htmltables");
+		BasicDBObject obj = (BasicDBObject) coll.findOne(new BasicDBObject("name",request.getParameterValues("name")[0]));
+		BasicDBList l;
+		if(obj.containsField("analysis")) l = (BasicDBList) obj.get("analysis");
+		else l = new BasicDBList();
+		BasicDBObject an = new BasicDBObject();
+		an.put("id", request.getParameterValues("analysisname")[0].replace(' ', '_'));
+		an.put("name", request.getParameterValues("analysisname")[0]);
+		an.put("table",A.getHTMLTable(A.getAnalysisName()));
+		l.add(an);
+		obj.remove("analysis");
+		obj.put("analysis",l);
+		coll.remove(new BasicDBObject("name",request.getParameterValues("name")[0]));
+		coll.insert(obj);
 		MC.close();
-		request.setAttribute("patientset", C.getHTMLTable(C.getName()));
-		request.setAttribute("id", request.getParameterValues("id")[0]);
-		request.getRequestDispatcher("/ContinueAnalysis.jsp").forward(request,response);
+		request.setAttribute("name", request.getParameterValues("name")[0]);
+		request.getRequestDispatcher("/Analysis.jsp").forward(request,response);
 	}
 
 }
