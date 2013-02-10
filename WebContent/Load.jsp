@@ -62,6 +62,9 @@
 		  				<label class="checkbox">
 		  					<input type="checkbox" name="rsID"/> Remove Mutations in dbSNP
 		  				</label>
+		  				<label class="checkbox">
+		  					<input type="checkbox" name="complemented"/> Get Complemented Mutations
+		  				</label>
 		  				<input type="hidden" name="id" value="<%= request.getParameter("id") %>" />
 		  			</fieldset>
 		  			<button type="submit" class="btn">Submit</button>

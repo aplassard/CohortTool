@@ -54,6 +54,7 @@ public class Analyze extends HttpServlet {
 		if(request.getParameterMap().containsKey("homozygous")) A.removeHomozygous();
 		if(request.getParameterMap().containsKey("heterozygous")) A.removeHeterozygous();
 		if(request.getParameterMap().containsKey("rsID")) A.removeDBSNP();
+		if(request.getParameterMap().containsKey("complemented")) A.leaveComplemented();
 		A.loadIntoDatabase();
 		A.loadMutationsIntoDataBase();
 		MC.close();

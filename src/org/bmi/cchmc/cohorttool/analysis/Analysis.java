@@ -116,7 +116,6 @@ public class Analysis extends Cohort {
 		}
 	}
 
-
 	public void exportMutations(boolean all, String filename){
 		HashMap<String,Integer> toExport = new HashMap<String, Integer>();
 		int n = 0;
@@ -171,9 +170,43 @@ public class Analysis extends Cohort {
 			}
 			out.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+	}
+
+	public void leaveComplemented(){
+		HashMap<String,HashMap<String,Integer>> patientgenes = new HashMap<String,HashMap<String,Integer>>(); // Patient Id, Gene, Count
+		System.out.println("Finding Complemented Mutations");
+		for(AnnotatedMutation AM: this.mutations.values()){
+			for(SimplePatientMutation SPM: AM.getSimplePatientMutations()){
+				HashMap<String,Integer> t;
+				int n=0;
+				if(patientgenes.containsKey(SPM.id)){
+					t = patientgenes.get(SPM.id);
+				}
+				else{
+					t = new HashMap<String,Integer>();
+				}
+				String[] genes = AM.getGenes();
+				if(genes.length>0){
+					if(t.containsKey(genes[0])){
+						n=t.get(genes[0])+1;
+						
+					}
+					else n=1;
+					t.put(genes[0],n);
+					patientgenes.put(SPM.id, t);
+				}
+			}
+		}
+		System.out.println("Removing Non-Complemented Mutations");
+		HashMap<SimpleMutation,AnnotatedMutation> newmut = new HashMap<SimpleMutation,AnnotatedMutation>();
+		for(SimpleMutation SM: this.mutations.keySet()){
+			AnnotatedMutation AM = this.mutations.get(SM);
+			AM.removeNonComplemented(patientgenes);
+			if(AM.getSimplePatientMutations().size()>0) newmut.put(AM.getSimpleMutation(), AM);
+		}
+		this.mutations=newmut;
 	}
 }
