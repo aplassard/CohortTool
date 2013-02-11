@@ -1,5 +1,9 @@
 package org.bmi.cchmc.cohorttool.mutation;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 import com.mongodb.BasicDBList;
@@ -161,5 +165,36 @@ public class AnnotatedMutation extends Mutation {
 			if(!PC.containsKey(SPM.id)||PC.get(SPM.id)<2) toRemove.add(SPM);
 		}
 		for(SimplePatientMutation SPM: toRemove) this.patients.remove(SPM);
+	}
+	
+	public static void main(String[] args){
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(args[0]));
+			String line;
+			while((line=br.readLine())!=null){
+				String[] inf = line.split(":");
+				if(inf.length>1){
+					System.out.print("name: "+inf[0]);
+					if(inf[1].contains("(")){
+						inf = inf[1].split("\\(")[1].split("\\)");
+						System.out.print(", p. name: "+inf[0]);
+					} else if(inf[1].contains("?")){
+						System.out.print("?");
+					} else{
+						System.out.println();
+						System.out.println(line);
+						System.exit(1);
+					}
+					
+					
+				}
+				System.out.println();
+			}
+			br.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
