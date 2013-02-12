@@ -7,6 +7,7 @@
 <head>
 <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet" type="text/css" />
 <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" />
 <meta charset=utf-8 />
 <title>Analysis</title>
 </head>
@@ -31,7 +32,7 @@
 	</div>
 </div>
 <br><br><br>
-<div class="span9 offset1">
+<div class="span12">
 	<div class="tabbable">
 		<%= ServletUtilities.getTabContent((String) request.getAttribute("name")) %>
 		<div class="tab-pane" id="long">
@@ -43,6 +44,7 @@
 </div> <!-- Extra div added in getTabContent --> 
 <script src="http://code.jquery.com/jquery.min.js"></script>
 <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.js"></script>
+<script src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
 <script>
 $(function() {
 	$("#myTabs").tab(); // initialize tabs
@@ -63,5 +65,26 @@ $(function() {
 	});
 	$('#myTabs a:first').tab("show"); // Load and display content for first tab
 </script>
+<script>
+$('#granthaminfo').popover({
+    title: 'Grantham Distance',
+    content: 'Grantham Scores categorize codon replacements into classes of increasing chemical dissimilarity based on the publication by Granthan R.in 1974, Amino acid difference formula to help explain protein evolution. Science 1974 185:862-864.' 
+  })
+</script>
+<script>
+  $(function() {
+    $( "#slider" ).slider({
+      range: "max",
+      value:0,
+      min: 0,
+      max: 215,
+      step: 1,
+      slide: function( event, ui ) {
+        $( "#granthamscore" ).val(  ui.value );
+      }
+    });
+    $( "#granthamscore" ).val(  $( "#slider" ).slider( "value" ) );
+  });
+ </script>
 </body>
 </html>

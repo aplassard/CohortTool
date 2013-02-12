@@ -51,6 +51,7 @@ public class Analyze extends HttpServlet {
 		if(request.getParameterMap().containsKey("heterozygous")) A.removeHeterozygous();
 		if(request.getParameterMap().containsKey("rsID")) A.removeDBSNP();
 		if(request.getParameterMap().containsKey("complemented")) A.leaveComplemented();
+		if(request.getParameterValues("granthamscore")[0] != null&&!request.getParameterValues("granthamscore")[0].equals("0")) A.removeGrantham(Integer.parseInt(request.getParameterValues("granthamscore")[0]));
 		A.loadIntoDatabase();
 		A.loadMutationsIntoDataBase();
 		A.getMutationCounts();

@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+import org.bmi.cchmc.cohorttool.translation.*;
+
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 
@@ -167,34 +169,63 @@ public class AnnotatedMutation extends Mutation {
 		for(SimplePatientMutation SPM: toRemove) this.patients.remove(SPM);
 	}
 	
+	public void removeGranthamChange(int n){
+		ArrayList<String> newp = new ArrayList<String>();
+		for(String p: this.protein){
+			if(p.matches("[a-zA-Z0-9-.]+(-[0-9])?:p.\\([a-zA-Z]{3}[0-9]+[a-zA-Z]{3}\\)")){
+				String[] t = p.split("([a-zA-Z0-9-.]+(-[0-9])?:p.\\(|[0-9]+|\\))"); ; // Substitution
+				if(GranthamDistance.get(AminoAcid.lookup(t[1]), AminoAcid.lookup(t[2]))<=n){
+					newp.add(p);
+				}
+			}
+		}
+		this.protein = new String[newp.size()];
+		for(int i = 0; i < newp.size(); i++) this.protein[i]=newp.get(i);
+	}
+	
 	public static void main(String[] args){
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(args[0]));
 			String line;
+			System.out.println("Starting");
+			int n = 0;
+			int m =0;
 			while((line=br.readLine())!=null){
-				String[] inf = line.split(":");
-				if(inf.length>1){
-					System.out.print("name: "+inf[0]);
-					if(inf[1].contains("(")){
-						inf = inf[1].split("\\(")[1].split("\\)");
-						System.out.print(", p. name: "+inf[0]);
-					} else if(inf[1].contains("?")){
-						System.out.print("?");
-					} else{
-						System.out.println();
-						System.out.println(line);
-						System.exit(1);
-					}
-					
-					
+				m++;
+				if(line.matches("[a-zA-Z0-9-.]+(-[0-9])?:p.\\([a-zA-Z]{3}[0-9]+[a-zA-Z]{3}\\)")) {
+					String[] t = line.split("([a-zA-Z0-9-.]+(-[0-9])?:p.\\(|[0-9]+|\\))"); ; // Substitution
+					for(String a : t) System.out.print(a+" "+a.length()+" ");
+					System.out.println();
 				}
-				System.out.println();
+				else if(line.matches("[a-zA-Z0-9-.]+(-[0-9])?:p.\\([a-zA-Z]{3}[0-9]+[a-zA-Z]{3}fs\\*[0-9]+\\)")) continue; // FrameShift 
+				else if(line.matches("[a-zA-Z0-9-.]+(-[0-9])?:p.\\(\\=\\)")) continue;  // No Change
+				else if(line.matches("[a-zA-Z0-9-.]+(-[0-9])?:p.\\?")) continue; // Unknown Change
+				else if(line.matches("[a-zA-Z0-9-.]+(-[0-9])?:p.\\([a-zA-Z]{3}[0-9]+[a-zA-Z]{3}fs\\*\\?\\)")) continue; //  FrameShift Unknown Effect
+				else if(line.matches("[a-zA-Z0-9-.]+(-[0-9])?:p.\\([a-zA-Z]{3}[0-9]+\\*\\)")) continue; // Early Stop
+				else if(line.matches("[a-zA-Z0-9-.]+(-[0-9])?:p.\\(Met1\\?\\)")) continue; // Start Mutilated, unknown effect
+				else if(line.matches("[a-zA-Z0-9-.]+(-[0-9])?:p.\\([a-zA-Z]{3}[0-9]+_[a-zA-Z]{3}[0-9]+del\\)")) continue; // Deletion
+				else if(line.matches("[a-zA-Z0-9-.]+(-[0-9])?:p.\\([a-zA-Z]{3}[0-9]+_([a-zA-Z]{3}[0-9]+)+ins([a-zA-Z]{3})+\\)")) continue; // Insertion
+				else if(line.matches("[a-zA-Z0-9-.]+(-[0-9])?:p.\\([a-zA-Z]{3}[0-9]+_[a-zA-Z]{3}[0-9]+dup\\)")) continue; // Duplication
+				else if(line.matches("[a-zA-Z0-9-.]+(-[0-9])?:p.\\([a-zA-Z]{3}[0-9]+_[a-zA-Z]{3}[0-9]+delins([a-zA-Z]{3})+\\)")) continue; // 3 bp Deletion
+				else if(line.matches("[a-zA-Z0-9-.]+(-[0-9])?:p.\\([a-zA-Z]{3}[0-9]+delins([a-zA-Z]{3})+\\)")) continue; // 3 bp insertion
+				else if(line.matches("[a-zA-Z0-9-.]+(-[0-9])?:p.\\(\\*[0-9]+[a-zA-Z0-9]+\\*([0-9]+|\\?)\\)")) continue; // Stop codon mutilated
+				else if(line.equals("")) continue; // blank line
+				else{
+					n++;
+					System.out.println(line+" didn't pass");
+				}
+				
 			}
 			br.close();
+			System.out.println("Done\n"+n+" didn't pass out of "+m);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public String[] getProteins() {
+		return this.protein;
 	}
 }

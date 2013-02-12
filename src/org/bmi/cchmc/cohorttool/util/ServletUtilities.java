@@ -294,6 +294,11 @@ public class ServletUtilities {
 			o+="<input type=\"checkbox\" name=\"heterozygous\"/> Remove Heterozygous Mutations<br>\n</label>\n<label class=\"checkbox\">\n<input type=\"checkbox\" name=\"homozygous\"/> Remove Homozygous Mutations </label>\n";
 			o+="<label class=\"checkbox\">\n<input type=\"checkbox\" name=\"rsID\"/> Remove Mutations in dbSNP </label>\n<label class=\"checkbox\">\n";
 			o+="<input type=\"checkbox\" name=\"complemented\"/> Get Complemented Mutations </label>\n<input type=\"hidden\" name=\"name\" value=\""+name+"\"/>\n";
+			o+="<p>";
+			o+="<label for=\"granthamscore\">Minimum Grantham Score: <a href=\"#\" id=\"granthaminfo\" rel=\"popover\">(Click For More Info)</a></label>\n";
+			o+="<input type=\"text\" name=\"granthamscore\" id=\"granthamscore\" style=\"border: 0; color: #f6931f; font-weight: bold;\" />\n";
+			o+="</p>\n";
+			o+="<div class=\"span3\" id=\"slider\"></div>\n";
 			o+="</fieldset>\n<button type=\"submit\" class=\"btn\">Submit</button>\n</form>\n</div>\n";
 			if(obj.containsField("analysis")){
 				BasicDBList a = (BasicDBList) obj.get("analysis");
