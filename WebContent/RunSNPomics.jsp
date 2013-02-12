@@ -45,7 +45,7 @@ padding-top: 60px; /* 60px to make the container go all the way to the bottom of
 <h2 class="">Annotating VCF</h2>
 <br><h3 class="">This may take a while, so watch Star Wars Episode 5 while you wait!</h3>
 <br>
-<img src="localhost:8080${pageContext.request.contextPath}/content/StarWars5.gif" alt="Star Wars"><br><br>
+<iframe src="./content/StarWars5.gif" name="Star Wars"><p>iframes are not supported by your browser.</p></iframe><br><br>
 </div>
 <form name="auto" action="/CohortTool/RunSNPomics" method="POST">  
     <input type="hidden" name="filename" value="<%=request.getAttribute("filename")%>"> 
