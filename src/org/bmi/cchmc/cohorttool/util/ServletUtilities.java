@@ -295,10 +295,15 @@ public class ServletUtilities {
 			o+="<label class=\"checkbox\">\n<input type=\"checkbox\" name=\"rsID\"/> Remove Mutations in dbSNP </label>\n<label class=\"checkbox\">\n";
 			o+="<input type=\"checkbox\" name=\"complemented\"/> Get Complemented Mutations </label>\n<input type=\"hidden\" name=\"name\" value=\""+name+"\"/>\n";
 			o+="<p>";
-			o+="<label for=\"granthamscore\">Minimum Grantham Score: <a href=\"#\" id=\"granthaminfo\" rel=\"popover\">(Click For More Info)</a></label>\n";
+			o+="<label for=\"granthamscore\">Grantham Score Cutoff: <a href=\"#\" id=\"granthaminfo\" rel=\"popover\">(Click For More Info)</a></label>\n";
 			o+="<input type=\"text\" name=\"granthamscore\" id=\"granthamscore\" style=\"border: 0; color: #f6931f; font-weight: bold;\" />\n";
 			o+="</p>\n";
-			o+="<div class=\"span3\" id=\"slider\"></div>\n";
+			o+="<div class=\"span3\" id=\"slider\"></div><br>\n";
+			o+="<p>";
+			o+="<label for=\"blosumscore\">Blosum Score Cutoff: <a href=\"#\" id=\"blosuminfo\" rel=\"popover\">(Click For More Info)</a></label>\n";
+			o+="<input type=\"text\" name=\"blosumscore\" id=\"blosumscore\" style=\"border: 0; color: #f6931f; font-weight: bold;\" />\n";
+			o+="</p>";
+			o+="<div class=\"span3\" id=\"blosumslider\"></div>\n";
 			o+="</fieldset>\n<button type=\"submit\" class=\"btn\">Submit</button>\n</form>\n</div>\n";
 			if(obj.containsField("analysis")){
 				BasicDBList a = (BasicDBList) obj.get("analysis");

@@ -174,7 +174,7 @@ public class AnnotatedMutation extends Mutation {
 		for(String p: this.protein){
 			if(p.matches("[a-zA-Z0-9-.]+(-[0-9])?:p.\\([a-zA-Z]{3}[0-9]+[a-zA-Z]{3}\\)")){
 				String[] t = p.split("([a-zA-Z0-9-.]+(-[0-9])?:p.\\(|[0-9]+|\\))"); ; // Substitution
-				if(GranthamDistance.get(AminoAcid.lookup(t[1]), AminoAcid.lookup(t[2]))<=n){
+				if(GranthamDistance.get(AminoAcid.lookup(t[1]), AminoAcid.lookup(t[2])) > n){
 					newp.add(p);
 				}
 			}
@@ -227,5 +227,19 @@ public class AnnotatedMutation extends Mutation {
 
 	public String[] getProteins() {
 		return this.protein;
+	}
+
+	public void removeBlosumChange(int n) {
+		ArrayList<String> newp = new ArrayList<String>();
+		for(String p: this.protein){
+			if(p.matches("[a-zA-Z0-9-.]+(-[0-9])?:p.\\([a-zA-Z]{3}[0-9]+[a-zA-Z]{3}\\)")){
+				String[] t = p.split("([a-zA-Z0-9-.]+(-[0-9])?:p.\\(|[0-9]+|\\))"); ; // Substitution
+				if(Blosum80.get(AminoAcid.lookup(t[1]), AminoAcid.lookup(t[2])) < n){
+					newp.add(p);
+				}
+			}
+		}
+		this.protein = new String[newp.size()];
+		for(int i = 0; i < newp.size(); i++) this.protein[i]=newp.get(i);
 	}
 }

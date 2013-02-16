@@ -213,4 +213,15 @@ public class Analysis extends Cohort {
 		System.out.println("There were "+this.mutations.size() + " mutations to start and "+newmuts.size()+" mutations at end");
 		this.mutations=newmuts;
 	}
+
+	public void removeBlosum(int n) {
+		HashMap<SimpleMutation,AnnotatedMutation> newmuts = new HashMap<SimpleMutation,AnnotatedMutation>();
+		for(SimpleMutation SM: this.mutations.keySet()){
+			AnnotatedMutation AM = this.mutations.get(SM);
+			AM.removeBlosumChange(n);
+			if(AM.getProteins().length > 0 ) newmuts.put(SM, AM);
+		}
+		System.out.println("There were "+this.mutations.size() + " mutations to start and "+newmuts.size()+" mutations at end");
+		this.mutations=newmuts;
+	}
 }

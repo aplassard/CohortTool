@@ -72,6 +72,12 @@ $('#granthaminfo').popover({
   })
 </script>
 <script>
+$('#blosuminfo').popover({
+    title: 'Blosum Score',
+    content: 'The BLOSUM (BLOcks SUbstitution Matrix) matrix is a substitution matrix used for sequence alignment of proteins. BLOSUM matrices are used to score alignments between evolutionarily divergent protein sequences. They are based on local alignments. BLOSUM matrices were first introduced in a paper by Henikoff and Henikoff.  Henikoff, S.; Henikoff, J.G. (1992). "Amino Acid Substitution Matrices from Protein Blocks". PNAS 89 (22): 10915–10919. doi:10.1073/pnas.89.22.10915. PMC 50453. PMID 1438297.' 
+  })
+</script>
+<script>
   $(function() {
     $( "#slider" ).slider({
       range: "max",
@@ -84,6 +90,21 @@ $('#granthaminfo').popover({
       }
     });
     $( "#granthamscore" ).val(  $( "#slider" ).slider( "value" ) );
+  });
+ </script>
+ <script>
+  $(function() {
+    $( "#blosumslider" ).slider({
+      range: "min",
+      value:11,
+      min: -4,
+      max: 11,
+      step: 1,
+      slide: function( event, ui ) {
+        $( "#blosumscore" ).val(  ui.value );
+      }
+    });
+    $( "#blosumscore" ).val(  $( "#blosumslider" ).slider( "value" ) );
   });
  </script>
 </body>
